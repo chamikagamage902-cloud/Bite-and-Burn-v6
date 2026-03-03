@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign up for Bite & Burn - Your personalized health journey starts here">
+    <title>Sign Up - Bite & Burn</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+        })();
+    </script>
+    <style>
+        .survey-container {
+            max-width: 700px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+
+        .survey-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .survey-progress {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: var(--gray-700);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: var(--primary);
+        }
+
+        .progress-step.completed {
+            background: var(--primary-light);
+        }
+
+        .survey-section {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .survey-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-subtitle {
+            color: var(--gray-400);
+            margin-bottom: 24px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .checkbox-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkbox-card:hover {
+            border-color: var(--primary);
+        }
+
+        .checkbox-card.selected {
+            border-color: var(--primary);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .checkbox-card input {
+            display: none;
+        }
+
+        .checkbox-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--gray-600);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-card.selected .checkbox-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkbox-card.selected .checkbox-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+        }
+
+        .radio-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-card:hover {
+            border-color: var(--primary);
+        }
+
+        .radio-card.selected {
+            border-color: var(--primary);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .radio-card input {
+            display: none;
+        }
+
+        .btn-nav {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn-nav .btn {
+            flex: 1;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .survey-complete {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .complete-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 24px;
+            animation: pulse 2s ease infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.body.classList.add('light-theme');
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="mobile-menu-btn mobile-hidden" id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                    aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <a href="../index.html" class="logo">
+                    <div class="logo-icon">
+                        <img src="../assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+                        <img src="../assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+                    </div>
+                    <span>Bite & Burn</span>
+                </a>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="auth-buttons mobile-hidden">
+                        <a href="signin.html" class="btn btn-secondary">Sign In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="survey-container">
+        <div class="survey-header">
+            <h1>Let's Get to Know You</h1>
+            <p class="text-muted">Complete this survey to get your personalized health plan</p>
+        </div>
+
+        <div class="survey-progress">
+            <div class="progress-step active" data-step="1"></div>
+            <div class="progress-step" data-step="2"></div>
+            <div class="progress-step" data-step="3"></div>
+            <div class="progress-step" data-step="4"></div>
+            <div class="progress-step" data-step="5"></div>
+            <div class="progress-step" data-step="6"></div>
+            <div class="progress-step" data-step="7"></div>
+            <div class="progress-step" data-step="8"></div>
+        </div>
+
+        <form id="surveyForm" onsubmit="handleSignup(event)">
+            <!-- Section 1: Basic Information -->
+            <div class="survey-section active" data-section="1">
+                <h2 class="section-title">📋 Basic Information</h2>
+                <p class="section-subtitle">Tell us about yourself</p>
+
+                <div class="form-group">
+                    <label class="form-label">What is your name? (optional)</label>
+                    <input type="text" class="form-input" name="name" placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address *</label>
+                    <input type="email" class="form-input" name="email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    <input type="password" class="form-input" name="password" placeholder="Create a password" required
+                        minlength="6">
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Age *</label>
+                        <input type="number" class="form-input" name="age" placeholder="25" required min="10" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gender *</label>
+                        <select class="form-input" name="gender" required>
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Country *</label>
+                    <select class="form-input" name="country" required id="countrySelect">
+                        <option value="">Select your country</option>
+                    </select>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Height (cm) *</label>
+                        <input type="number" class="form-input" name="height" placeholder="170" required min="100"
+                            max="250">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weight (kg) *</label>
+                        <input type="number" class="form-input" name="weight" placeholder="70" required min="30"
+                            max="300">
+                    </div>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="nextSection()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Sections 2-7 remain unchanged structure-wise, just need to ensure form ID wraps them all correctly which it does -->
+            <!-- For brevity in this tool call, skipping middle sections as they don't need change, only the opening tag and closing handler logic need update. 
+                 Wait, I can't skip content in replace_file_content if I'm replacing a block. 
+                 The instruction was to Update form submission. 
+                 I will just replace the specific script part or the form tag if I can target it.
+                 Actually, the previous code had `<form id="surveyForm">` and no inline onsubmit. 
+                 I should Update the script at the bottom instead.
+            -->
+
+
+            <!-- Section 2: Your Goal -->
+            <div class="survey-section" data-section="2">
+                <h2 class="section-title">🎯 Your Goal</h2>
+                <p class="section-subtitle">What would you like to achieve?</p>
+
+                <div class="form-group">
+                    <label class="form-label">What is your main goal? *</label>
+                    <div class="radio-options" id="goalOptions">
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="goal" value="lose_weight">
+                            🏃 Lose Weight
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="goal" value="gain_muscle">
+                            💪 Gain Muscle
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="goal" value="stay_fit">
+                            ❤️ Stay Fit / Healthy
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="goal" value="improve_strength">
+                            🏋️ Improve Strength
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="goal" value="improve_stamina">
+                            🚴 Improve Stamina
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Target weight (kg) - optional</label>
+                    <input type="number" class="form-input" name="targetWeight" placeholder="65">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">How quickly do you want to reach your goal?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="pace" value="slow">
+                            🐢 Slowly & Safely
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="pace" value="normal" checked>
+                            ⚖️ Normal Pace
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="pace" value="fast">
+                            🚀 As Fast as Possible
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="prevSection()">← Back</button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="nextSection()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Section 3: Health Information -->
+            <div class="survey-section" data-section="3">
+                <h2 class="section-title">❤️ Health Information</h2>
+                <p class="section-subtitle">This helps us keep you safe</p>
+
+                <div class="form-group">
+                    <label class="form-label">Do you have any medical conditions?</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="conditions" value="diabetes">
+                            <span class="checkbox-icon"></span>
+                            Diabetes
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="conditions" value="blood_pressure">
+                            <span class="checkbox-icon"></span>
+                            High Blood Pressure
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="conditions" value="thyroid">
+                            <span class="checkbox-icon"></span>
+                            Thyroid
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="conditions" value="heart">
+                            <span class="checkbox-icon"></span>
+                            Heart Condition
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="conditions" value="asthma">
+                            <span class="checkbox-icon"></span>
+                            Asthma
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="conditions" value="none">
+                            <span class="checkbox-icon"></span>
+                            None
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Are you currently taking any medicines? (optional)</label>
+                    <textarea class="form-input" name="medicines" rows="2"
+                        placeholder="List any medications..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Do you have any food allergies?</label>
+                    <input type="text" class="form-input" name="allergies" placeholder="e.g., nuts, dairy, shellfish">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Do you feel stress or sleep problems often?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="stress" value="yes">
+                            😟 Yes
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="stress" value="sometimes">
+                            😐 Sometimes
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="stress" value="no">
+                            😊 No
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="prevSection()">← Back</button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="nextSection()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Section 4: Injuries & Physical Limitations -->
+            <div class="survey-section" data-section="4">
+                <h2 class="section-title">🦴 Injuries & Physical Limitations</h2>
+                <p class="section-subtitle">So we can customize safe exercises for you</p>
+
+                <div class="form-group">
+                    <label class="form-label">Do you have any past or current injuries?</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="injuries" value="back_pain">
+                            <span class="checkbox-icon"></span>
+                            Back Pain
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="injuries" value="knee_pain">
+                            <span class="checkbox-icon"></span>
+                            Knee Pain
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="injuries" value="shoulder_pain">
+                            <span class="checkbox-icon"></span>
+                            Shoulder Pain
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="injuries" value="joint">
+                            <span class="checkbox-icon"></span>
+                            Joint Problems
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="injuries" value="none">
+                            <span class="checkbox-icon"></span>
+                            None
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Have you ever had surgery? (optional)</label>
+                    <input type="text" class="form-input" name="surgery" placeholder="Describe any past surgeries">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Any movements/exercises you cannot do comfortably?</label>
+                    <textarea class="form-input" name="limitations" rows="2"
+                        placeholder="e.g., cannot do squats, cannot lift heavy"></textarea>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="prevSection()">← Back</button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="nextSection()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Section 5: Fitness Level -->
+            <div class="survey-section" data-section="5">
+                <h2 class="section-title">💪 Fitness Level</h2>
+                <p class="section-subtitle">Tell us about your current activity</p>
+
+                <div class="form-group">
+                    <label class="form-label">How active are you?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="activityLevel" value="beginner">
+                            🌱 Beginner (little/no exercise)
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="activityLevel" value="moderate">
+                            🚶 Moderate (1-3 days/week)
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="activityLevel" value="active">
+                            🏃 Active (4-6 days/week)
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="activityLevel" value="very_active">
+                            🔥 Very Active (daily)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Where do you prefer to work out?</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="workoutPlace" value="home">
+                            <span class="checkbox-icon"></span>
+                            🏠 Home
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="workoutPlace" value="gym">
+                            <span class="checkbox-icon"></span>
+                            🏋️ Gym
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="workoutPlace" value="outdoors">
+                            <span class="checkbox-icon"></span>
+                            🌳 Outdoors
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="workoutPlace" value="mix">
+                            <span class="checkbox-icon"></span>
+                            🔄 Mix
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">How much time can you give daily?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="workoutTime" value="15">
+                            ⏱️ 15–20 minutes
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="workoutTime" value="30">
+                            ⏱️ 30 minutes
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="workoutTime" value="45">
+                            ⏱️ 45 minutes
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="workoutTime" value="60">
+                            ⏱️ 60+ minutes
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="prevSection()">← Back</button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="nextSection()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Section 6: Food & Lifestyle -->
+            <div class="survey-section" data-section="6">
+                <h2 class="section-title">🥗 Food & Lifestyle</h2>
+                <p class="section-subtitle">Important for personalized meal plans</p>
+
+                <div class="form-group">
+                    <label class="form-label">What type of diet do you follow?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="dietType" value="vegetarian">
+                            🥬 Vegetarian
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="dietType" value="non_vegetarian">
+                            🍖 Non-vegetarian
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="dietType" value="vegan">
+                            🌱 Vegan
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="dietType" value="mixed">
+                            🍽️ Mixed
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Any foods you do not eat? (religion/personal choice)</label>
+                    <input type="text" class="form-input" name="foodRestrictions"
+                        placeholder="e.g., pork, beef, seafood">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">How many meals do you eat daily?</label>
+                    <select class="form-input" name="mealsPerDay">
+                        <option value="2">2 meals</option>
+                        <option value="3" selected>3 meals</option>
+                        <option value="4">4 meals</option>
+                        <option value="5">5+ meals</option>
+                    </select>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Do you drink alcohol?</label>
+                        <select class="form-input" name="alcohol">
+                            <option value="no">No</option>
+                            <option value="occasionally">Occasionally</option>
+                            <option value="regularly">Regularly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Do you smoke?</label>
+                        <select class="form-input" name="smoke">
+                            <option value="no">No</option>
+                            <option value="occasionally">Occasionally</option>
+                            <option value="regularly">Regularly</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="prevSection()">← Back</button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="nextSection()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Section 7: Preferences -->
+            <div class="survey-section" data-section="7">
+                <h2 class="section-title">🌍 Preferences</h2>
+                <p class="section-subtitle">Customize your experience</p>
+
+                <div class="form-group">
+                    <label class="form-label">What kind of meals do you prefer?</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="mealPreference" value="simple">
+                            <span class="checkbox-icon"></span>
+                            🏠 Simple Home Foods
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="mealPreference" value="budget">
+                            <span class="checkbox-icon"></span>
+                            💰 Budget-friendly
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="mealPreference" value="high_protein">
+                            <span class="checkbox-icon"></span>
+                            💪 High-protein
+                        </label>
+                        <label class="checkbox-card" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" name="mealPreference" value="traditional">
+                            <span class="checkbox-icon"></span>
+                            🍲 Traditional Foods
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">What motivates you most?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="motivation" value="visible_results">
+                            📈 Visible Results
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="motivation" value="health">
+                            ❤️ Health Improvement
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="motivation" value="energy">
+                            ⚡ Energy & Mood
+                        </label>
+                        <label class="radio-card" onclick="selectRadio(this)">
+                            <input type="radio" name="motivation" value="discipline">
+                            🎯 Discipline
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="prevSection()">← Back</button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="nextSection()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Section 8: Final -->
+            <div class="survey-section" data-section="8">
+                <h2 class="section-title">✨ Almost Done!</h2>
+                <p class="section-subtitle">Just a few more questions</p>
+
+                <div class="form-group">
+                    <label class="form-label">What challenges stop you from staying fit?</label>
+                    <textarea class="form-input" name="challenges" rows="3"
+                        placeholder="e.g., lack of time, motivation, access to gym..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Anything else you want us to know to personalize your plan?</label>
+                    <textarea class="form-input" name="additionalInfo" rows="3"
+                        placeholder="Share any other information..."></textarea>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="prevSection()">← Back</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Complete Sign Up ✓</button>
+                </div>
+            </div>
+
+            <!-- Completion Section -->
+            <div class="survey-section" data-section="complete">
+                <div class="survey-complete">
+                    <div class="complete-icon">🎉</div>
+                    <h2>Welcome to Bite & Burn!</h2>
+                    <p class="text-muted">Your personalized health journey begins now.</p>
+                    <a href="planning.html" class="btn btn-primary btn-lg mt-2">Plan for Tomorrow →</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        let currentSection = 1;
+        const totalSections = 8;
+
+        // Populate countries
+        document.addEventListener('DOMContentLoaded', () => {
+            const countrySelect = document.getElementById('countrySelect');
+            COUNTRIES.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country.code;
+                option.textContent = country.name;
+                countrySelect.appendChild(option);
+            });
+        });
+
+        function updateProgress() {
+            document.querySelectorAll('.progress-step').forEach((step, i) => {
+                const stepNum = i + 1;
+                step.classList.remove('active', 'completed');
+                if (stepNum < currentSection) step.classList.add('completed');
+                if (stepNum === currentSection) step.classList.add('active');
+            });
+        }
+
+        function showSection(num) {
+            document.querySelectorAll('.survey-section').forEach(s => s.classList.remove('active'));
+            const section = document.querySelector(`[data-section="${num}"]`);
+            if (section) section.classList.add('active');
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        function selectRadio(element) {
+            const parent = element.closest('.radio-options');
+            parent.querySelectorAll('.radio-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+
+        function toggleCheckbox(element) {
+            // Use setTimeout to let the browser's native label behavior toggle the checkbox first
+            setTimeout(() => {
+                const input = element.querySelector('input');
+                if (input.checked) {
+                    element.classList.add('selected');
+                } else {
+                    element.classList.remove('selected');
+                }
+            }, 0);
+        }
+
+        // Form submission
+        async function handleSignup(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const userData = {
+                // id: generateId(), // ID is generated by server now
+                name: formData.get('name') || 'User',
+                email: formData.get('email'),
+                password: formData.get('password'),
+                age: parseInt(formData.get('age')),
+                gender: formData.get('gender'),
+                country: formData.get('country'),
+                height: parseFloat(formData.get('height')),
+                weight: parseFloat(formData.get('weight')),
+                goal: formData.get('goal'),
+                targetWeight: formData.get('targetWeight'),
+                pace: formData.get('pace'),
+                conditions: formData.getAll('conditions'),
+                medicines: formData.get('medicines'),
+                allergies: formData.get('allergies'),
+                stress: formData.get('stress'),
+                injuries: formData.getAll('injuries'),
+                surgery: formData.get('surgery'),
+                limitations: formData.get('limitations'),
+                activityLevel: formData.get('activityLevel'),
+                workoutPlace: formData.getAll('workoutPlace'),
+                workoutTime: formData.get('workoutTime'),
+                dietType: formData.get('dietType'),
+                foodRestrictions: formData.get('foodRestrictions'),
+                mealsPerDay: formData.get('mealsPerDay'),
+                alcohol: formData.get('alcohol'),
+                smoke: formData.get('smoke'),
+                mealPreference: formData.getAll('mealPreference'),
+                motivation: formData.get('motivation'),
+                challenges: formData.get('challenges'),
+                additionalInfo: formData.get('additionalInfo'),
+                // createdAt: new Date().toISOString() // Server handles this
+            };
+
+            // Calculate BMI
+            userData.bmi = calculateBMI(userData.weight, userData.height);
+
+            // Calculate daily calories
+            userData.dailyCalories = calculateCalories(
+                userData.weight,
+                userData.height,
+                userData.age,
+                userData.gender
+            );
+
+            try {
+                // Save user to multi-user database
+                await registerUser(userData);
+
+                // Achievements are now handled inside registerUser for offline mode
+
+                // Show completion
+                showSection('complete');
+            } catch (error) {
+                // In local-first mode, registerUser handles the catch and returns true if offline
+                // If we get here, it's a real validation error
+                alert('Signup failed: ' + error.message);
+            }
+        }
+
+        // Remove the event listener since we added onsubmit="handleSignup(event)" to the form
+        // document.getElementById('surveyForm').addEventListener('submit', ...) 
+
+    </script>
+</body>
+
+</html>

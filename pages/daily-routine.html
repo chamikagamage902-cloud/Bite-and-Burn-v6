@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your daily routine with Bite & Burn">
+    <title>Daily Routine - Bite & Burn</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+        })();
+    </script>
+    <style>
+        .routine-page {
+            padding: 100px 0 40px;
+            min-height: 100vh;
+        }
+
+        .routine-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .greeting {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .greeting-sub {
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            flex-shrink: 0;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .routine-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .routine-page {
+                padding: 80px 0 20px;
+            }
+
+            .routine-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .progress-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .progress-circle-wrapper {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 16px;
+        }
+
+        .progress-circle-wrapper svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle-wrapper .bg {
+            fill: none;
+            stroke: var(--gray-700);
+            stroke-width: 12;
+        }
+
+        .progress-circle-wrapper .progress {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-percent {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .progress-label {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 480px) {
+            .progress-circle-wrapper {
+                width: 140px;
+                height: 140px;
+            }
+
+            .progress-circle-wrapper svg {
+                width: 140px;
+                height: 140px;
+            }
+
+            .progress-percent {
+                font-size: 1.75rem;
+            }
+        }
+
+        .add-routine-card {
+            background: var(--gray-800);
+            border: 2px dashed var(--gray-600);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-routine-card:hover {
+            border-color: var(--primary);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .add-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .achievement-card {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .tasks-area {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            transition: box-shadow 0.5s ease;
+        }
+
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .tasks-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .routine-tabs {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .routine-tab {
+                white-space: nowrap;
+                flex: 1;
+                text-align: center;
+            }
+        }
+
+        .routine-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .routine-tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-full);
+            color: var(--gray-400);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .routine-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--gray-700);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--gray-500);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox.checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .task-time {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        .task-delete {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 1.25rem;
+            transition: color 0.2s ease;
+        }
+
+        .task-delete:hover {
+            color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        /* Add Task Modal */
+        .add-task-form {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-700);
+        }
+
+        .add-task-form input {
+            flex: 1;
+        }
+
+        /* Glow effect for task intensity */
+        .tasks-area.low-intensity {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+        }
+
+        .tasks-area.medium-intensity {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .tasks-area.high-intensity {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.body.classList.add('light-theme');
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                    aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <a href="javascript:history.back()" class="btn btn-icon btn-secondary">←</a>
+                    <a href="../index.html" class="logo">
+                        <div class="logo-icon">
+                            <img src="../assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+                            <img src="../assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+                        </div>
+                        <span>Bite & Burn</span>
+                    </a>
+                </div>
+
+                <nav>
+                    <ul class="nav-links" id="navLinks">
+                        <li><a href="food-planning.html">Food Planning</a></li>
+                        <li><a href="workout.html">Workout</a></li>
+                        <li><a href="daily-routine.html">Daily Routine</a></li>
+                        <li><a href="analyzing.html">Analyzing</a></li>
+                        <li><a href="achievements.html">Achievements</a></li>
+                    </ul>
+                </nav>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-icon btn-secondary" onclick="showAchievementPopup()"
+                        title="Achievements">🏆</button>
+                    <a href="../index.html" class="btn btn-icon btn-secondary" title="Home">🏠</a>
+                    <div class="auth-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="routine-page">
+        <div class="container">
+            <div class="routine-header">
+                <div>
+                    <h1 class="greeting" id="greeting">Good Evening!</h1>
+                    <p class="greeting-sub" id="dateDisplay"></p>
+                </div>
+                <div class="profile-section" onclick="showProfilePopup()">
+                    <span id="userName">User</span>
+                    <div class="profile-pic" id="profilePic">👤</div>
+                </div>
+            </div>
+
+            <div class="routine-content">
+                <div class="sidebar">
+                    <!-- Progress Circle -->
+                    <div class="progress-card">
+                        <h3 style="margin-bottom: 16px;">Today's Progress</h3>
+                        <div class="progress-circle-wrapper">
+                            <svg width="180" height="180" viewBox="0 0 180 180">
+                                <defs>
+                                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#22c55e" />
+                                        <stop offset="100%" style="stop-color:#10b981" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="bg" cx="90" cy="90" r="78" />
+                                <circle class="progress" id="progressCircle" cx="90" cy="90" r="78"
+                                    stroke-dasharray="490" stroke-dashoffset="490" />
+                            </svg>
+                            <div class="progress-text">
+                                <span class="progress-percent" id="progressPercent">0%</span>
+                                <span class="progress-label">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Routine Card -->
+                    <div class="add-routine-card" onclick="window.location.href='planning.html'">
+                        <div class="add-icon">➕</div>
+                        <p>Edit your daily routine</p>
+                        <p class="text-muted" style="font-size: 0.875rem;">Plan your weekday, weekend, or special
+                            routines</p>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="achievement-card" onclick="showAchievementPopup()">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 2rem;">🏆</span>
+                            <div>
+                                <strong>Achievements</strong>
+                                <p class="text-muted" style="font-size: 0.875rem;" id="achievementCount">0 unlocked</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tasks-area" id="tasksArea">
+                    <div class="tasks-header">
+                        <h2>Daily Tasks</h2>
+                        <div class="routine-tabs">
+                            <button class="routine-tab active" data-type="weekday"
+                                onclick="switchRoutineType('weekday')">Weekday</button>
+                            <button class="routine-tab" data-type="weekend"
+                                onclick="switchRoutineType('weekend')">Weekend</button>
+                            <button class="routine-tab" data-type="special"
+                                onclick="switchRoutineType('special')">Special</button>
+                        </div>
+                    </div>
+
+                    <div class="task-list" id="taskList">
+                        <!-- Tasks will be inserted here -->
+                    </div>
+
+                    <div class="add-task-form">
+                        <input type="text" class="form-input" id="newTaskInput" placeholder="Add a new task...">
+                        <input type="time" class="form-input" id="newTaskTime" style="width: 120px;">
+                        <button class="btn btn-primary" onclick="addTask()">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Toggle -->
+    <button class="chat-toggle" id="chatToggle" aria-label="Open chat">💬</button>
+
+    <!-- Chat Popup -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header">
+            <span>Bite & Burn Assistant</span>
+            <button class="modal-close" id="chatClose">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">👋 Hi! How can I help with your daily routine?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="form-input" placeholder="Type a message..." id="chatInput">
+            <button class="btn btn-primary btn-icon" id="chatSend">➤</button>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        let currentRoutineType = 'weekday';
+        let routines = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check auth
+            if (!isLoggedIn()) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            const user = getCurrentUser();
+
+            // Set greeting
+            const greeting = getGreeting();
+            document.getElementById('greeting').textContent = `${greeting}, ${user.name || 'User'}!`;
+            document.getElementById('userName').textContent = user.name || 'User';
+
+            // Set date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', options);
+
+            // Set profile pic
+            if (user.avatar) {
+                document.getElementById('profilePic').innerHTML = `<img src="${user.avatar}" alt="Profile">`;
+            }
+
+            // Load routines
+            routines = getFromStorage(STORAGE_KEYS.ROUTINES) || {
+                weekday: [],
+                weekend: [],
+                special: []
+            };
+
+            // Auto-select based on day
+            currentRoutineType = getDayType();
+            document.querySelectorAll('.routine-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.type === currentRoutineType);
+            });
+
+            // Load achievements count
+            const achievements = getFromStorage(STORAGE_KEYS.ACHIEVEMENTS) || [];
+            document.getElementById('achievementCount').textContent = `${achievements.length} unlocked`;
+
+            renderTasks();
+        });
+
+        function switchRoutineType(type) {
+            currentRoutineType = type;
+            document.querySelectorAll('.routine-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.type === type);
+            });
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            const tasks = routines[currentRoutineType] || [];
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <p>No tasks yet for ${currentRoutineType}</p>
+            <p class="text-muted">Add tasks below or go to Planning</p>
+          </div>
+        `;
+            } else {
+                taskList.innerHTML = tasks.map((task, index) => `
+          <div class="task-item ${task.completed ? 'completed' : ''}" data-index="${index}">
+            <div class="task-checkbox ${task.completed ? 'checked' : ''}" 
+              onclick="toggleTask(${index})"></div>
+            <div class="task-content">
+              <div class="task-title">${task.title}</div>
+              ${task.time ? `<div class="task-time">⏰ ${task.time}</div>` : ''}
+            </div>
+            <button class="task-delete" onclick="deleteTask(${index})">🗑️</button>
+          </div>
+        `).join('');
+            }
+
+            updateProgress();
+            updateGlowEffect();
+        }
+
+        function addTask() {
+            const input = document.getElementById('newTaskInput');
+            const timeInput = document.getElementById('newTaskTime');
+            const title = input.value.trim();
+
+            if (!title) return;
+
+            if (!routines[currentRoutineType]) {
+                routines[currentRoutineType] = [];
+            }
+
+            routines[currentRoutineType].push({
+                id: generateId(),
+                title,
+                time: timeInput.value,
+                completed: false,
+                createdAt: new Date().toISOString()
+            });
+
+            saveData(STORAGE_KEYS.ROUTINES, routines);
+            input.value = '';
+            timeInput.value = '';
+
+            renderTasks();
+            showToast('Task added!', 'success');
+
+            // Check for achievement
+            const totalTasks = Object.values(routines).flat().length;
+            if (totalTasks >= 10) {
+                unlockAchievement('planner', 'Master Planner', 'Created 10+ daily tasks', '📋');
+            }
+        }
+
+        function toggleTask(index) {
+            routines[currentRoutineType][index].completed = !routines[currentRoutineType][index].completed;
+            saveData(STORAGE_KEYS.ROUTINES, routines);
+            renderTasks();
+
+            // Check for achievement
+            const completed = routines[currentRoutineType].filter(t => t.completed).length;
+            const total = routines[currentRoutineType].length;
+
+            if (completed === total && total > 0) {
+                unlockAchievement('all_tasks_done', 'Task Master', 'Completed all daily tasks', '✅');
+            }
+
+            // Check for Early Bird (Task completed before 8 AM)
+            const now = new Date();
+            if (routines[currentRoutineType][index].completed && now.getHours() < 8 && now.getHours() >= 4) {
+                unlockAchievement('early_bird', 'Early Bird', 'Completed morning tasks early', '🌅');
+            }
+        }
+
+        function deleteTask(index) {
+            routines[currentRoutineType].splice(index, 1);
+            saveData(STORAGE_KEYS.ROUTINES, routines);
+            renderTasks();
+            showToast('Task deleted', 'info');
+        }
+
+        function updateProgress() {
+            const tasks = routines[currentRoutineType] || [];
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            const circumference = 78 * 2 * Math.PI;
+            const offset = circumference - (percent / 100) * circumference;
+
+            document.getElementById('progressCircle').style.strokeDashoffset = offset;
+            document.getElementById('progressPercent').textContent = `${percent}%`;
+        }
+
+        function updateGlowEffect() {
+            const tasks = routines[currentRoutineType] || [];
+            const total = tasks.length;
+            const tasksArea = document.getElementById('tasksArea');
+
+            tasksArea.classList.remove('low-intensity', 'medium-intensity', 'high-intensity');
+
+            if (total <= 3) {
+                tasksArea.classList.add('low-intensity');
+            } else if (total <= 6) {
+                tasksArea.classList.add('medium-intensity');
+            } else {
+                tasksArea.classList.add('high-intensity');
+            }
+        }
+
+        // Allow enter key to add task
+        document.getElementById('newTaskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+    </script>
+</body>
+
+</html>

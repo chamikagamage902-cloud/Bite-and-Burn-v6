@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Personalized workout plans at Bite & Burn">
+    <title>Workout Plan - Bite & Burn</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+        })();
+    </script>
+    <style>
+        :root {
+            --primary: #ef4444;
+            --primary-dark: #dc2626;
+            --primary-light: #f87171;
+            --primary-glow: rgba(239, 68, 68, 0.3);
+            --gradient-primary: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        }
+
+        body {
+            background: var(--dark);
+        }
+
+        .workout-page {
+            padding: 100px 0 40px;
+            min-height: 100vh;
+        }
+
+        .workout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+        }
+
+        .workout-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .workout-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Progress Sidebar */
+        .workout-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .workout-progress-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .workout-progress-circle {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 16px;
+        }
+
+        .workout-progress-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .workout-progress-circle .bg {
+            fill: none;
+            stroke: var(--gray-700);
+            stroke-width: 10;
+        }
+
+        .workout-progress-circle .progress {
+            fill: none;
+            stroke: url(#workoutGradient);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .workout-progress-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .workout-progress-percent {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Camera Section */
+        .camera-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .camera-preview {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: var(--gray-900);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .camera-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-600);
+        }
+
+        .camera-placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+        }
+
+        .rep-counter {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        /* Exercise List */
+        .exercise-area {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+        }
+
+        .exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .exercise-card {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            border-color: var(--primary);
+        }
+
+        .exercise-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .exercise-card.completed {
+            opacity: 0.6;
+            border-color: #22c55e;
+        }
+
+        .exercise-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            flex-shrink: 0;
+        }
+
+        .exercise-card.completed .exercise-icon {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .exercise-info {
+            flex: 1;
+        }
+
+        .exercise-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin-bottom: 4px;
+        }
+
+        .exercise-details {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        .exercise-timer {
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .exercise-card.completed .timer-display {
+            color: #22c55e;
+        }
+
+        .start-btn {
+            padding: 10px 24px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .start-btn.running {
+            background: var(--gray-700);
+        }
+
+        .completed-badge {
+            background: #22c55e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+        }
+
+        /* Timer Modal */
+        .timer-modal {
+            position: fixed;
+            inset: 0;
+            background: var(--dark);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            flex-direction: column;
+        }
+
+        .timer-modal.active {
+            display: flex;
+        }
+
+        .timer-exercise-name {
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            color: var(--gray-300);
+        }
+
+        .big-timer {
+            font-size: 8rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: var(--primary);
+            margin-bottom: 32px;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 16px;
+        }
+
+        .timer-btn {
+            padding: 16px 48px;
+            border: none;
+            border-radius: var(--radius-xl);
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timer-btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .timer-btn-secondary {
+            background: var(--gray-700);
+            color: var(--gray-300);
+        }
+
+        /* Light Theme Text Color Fixes for Sidebar Areas */
+        body.light-theme .workout-progress-card,
+        body.light-theme .camera-card {
+            color: #111827;
+        }
+
+        body.light-theme .workout-progress-card h3,
+        body.light-theme .camera-card h4 {
+            color: #111827;
+        }
+
+        body.light-theme .workout-progress-text .progress-label,
+        body.light-theme .workout-progress-card .text-muted,
+        body.light-theme .camera-placeholder {
+            color: #4b5563 !important;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.body.classList.add('light-theme');
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                    aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <a href="javascript:history.back()" class="btn btn-icon btn-secondary">←</a>
+                    <a href="../index.html" class="logo">
+                        <div class="logo-icon">
+                            <img src="../assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+                            <img src="../assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+                        </div>
+                        <span>Bite & Burn</span>
+                    </a>
+                </div>
+
+                <nav>
+                    <ul class="nav-links" id="navLinks">
+                        <li><a href="food-planning.html">Food Planning</a></li>
+                        <li><a href="workout.html">Workout</a></li>
+                        <li><a href="daily-routine.html">Daily Routine</a></li>
+                        <li><a href="analyzing.html">Analyzing</a></li>
+                        <li><a href="achievements.html">Achievements</a></li>
+                    </ul>
+                </nav>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-icon btn-secondary" onclick="showAchievementPopup()"
+                        title="Achievements">🏆</button>
+                    <a href="../index.html" class="btn btn-icon btn-secondary" title="Home">🏠</a>
+                    <div class="auth-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="workout-page">
+        <div class="container">
+            <div class="workout-header">
+                <div>
+                    <h1>Today's Workout 💪</h1>
+                    <p class="text-muted">Personalized based on your fitness profile</p>
+                </div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="userBMI">--</div>
+                        <div class="stat-label">BMI</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="targetCalories">--</div>
+                        <div class="stat-label">Cal to Burn</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="workoutTime">--</div>
+                        <div class="stat-label">Minutes</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workout-layout">
+                <div class="workout-sidebar">
+                    <!-- Progress Circle -->
+                    <div class="workout-progress-card">
+                        <h3 style="margin-bottom: 16px;">Workout Progress</h3>
+                        <div class="workout-progress-circle">
+                            <svg width="160" height="160" viewBox="0 0 160 160">
+                                <defs>
+                                    <linearGradient id="workoutGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ef4444" />
+                                        <stop offset="100%" style="stop-color:#b91c1c" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="bg" cx="80" cy="80" r="70" />
+                                <circle class="progress" id="workoutProgressCircle" cx="80" cy="80" r="70"
+                                    stroke-dasharray="440" stroke-dashoffset="440" />
+                            </svg>
+                            <div class="workout-progress-text">
+                                <span class="workout-progress-percent" id="workoutPercent">0%</span>
+                                <span class="progress-label">Complete</span>
+                            </div>
+                        </div>
+                        <p id="exercisesDone" class="text-muted">0 of 0 exercises</p>
+                    </div>
+
+                    <!-- Camera Section -->
+                    <div class="camera-card">
+                        <h4 style="margin-bottom: 12px;">Exercise Counter 📹</h4>
+                        <div class="camera-preview" id="cameraPreview">
+                            <div class="camera-placeholder">
+                                <div class="camera-placeholder-icon">📷</div>
+                                <p>Camera will activate during exercise</p>
+                            </div>
+                        </div>
+                        <div class="rep-counter" id="repCounter">Reps: 0</div>
+                    </div>
+                </div>
+
+                <div class="exercise-area">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2>Exercises</h2>
+                        <button class="btn btn-secondary" onclick="regenerateWorkout()">🔄 New Workout</button>
+                    </div>
+
+                    <div class="exercise-list" id="exerciseList">
+                        <!-- Exercises will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Timer Modal -->
+    <div class="timer-modal" id="timerModal">
+        <div class="timer-exercise-name" id="timerExerciseName">Exercise Name</div>
+        <div class="big-timer" id="bigTimer">00:00</div>
+        <div class="rep-counter" id="modalRepCounter" style="font-size: 2rem; margin-bottom: 24px;">Reps: 0</div>
+        <div class="timer-controls">
+            <button class="timer-btn timer-btn-secondary" onclick="skipExercise()">Skip</button>
+            <button class="timer-btn timer-btn-primary" id="timerControlBtn" onclick="toggleTimer()">Start</button>
+            <button class="timer-btn timer-btn-secondary" onclick="completeExercise()">Done</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Toggle -->
+    <button class="chat-toggle" id="chatToggle" style="background: var(--gradient-primary);">💬</button>
+
+    <!-- Chat Popup -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header" style="background: var(--gradient-primary);">
+            <span>Workout Assistant</span>
+            <button class="modal-close" id="chatClose">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">💪 Ready to crush your workout? Ask me anything!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="form-input" placeholder="Type a message..." id="chatInput">
+            <button class="btn btn-primary btn-icon" id="chatSend"
+                style="background: var(--gradient-primary);">➤</button>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        // Exercise database
+        const EXERCISES = {
+            beginner: [
+                { name: 'Jumping Jacks', icon: '🏃', duration: 30, reps: null, type: 'cardio' },
+                { name: 'Wall Push-ups', icon: '💪', duration: null, reps: 10, type: 'strength' },
+                { name: 'Knee Raises', icon: '🦵', duration: 30, reps: null, type: 'cardio' },
+                { name: 'Standing Side Bends', icon: '🧘', duration: 30, reps: null, type: 'flexibility' },
+                { name: 'Calf Raises', icon: '🦶', duration: null, reps: 15, type: 'strength' },
+                { name: 'Arm Circles', icon: '🔄', duration: 30, reps: null, type: 'warmup' },
+                { name: 'Standing Leg Curls', icon: '🦿', duration: null, reps: 12, type: 'strength' },
+                { name: 'Marching in Place', icon: '🚶', duration: 60, reps: null, type: 'cardio' }
+            ],
+            moderate: [
+                { name: 'Burpees', icon: '🔥', duration: null, reps: 10, type: 'cardio' },
+                { name: 'Push-ups', icon: '💪', duration: null, reps: 15, type: 'strength' },
+                { name: 'Squats', icon: '🏋️', duration: null, reps: 20, type: 'strength' },
+                { name: 'Mountain Climbers', icon: '⛰️', duration: 45, reps: null, type: 'cardio' },
+                { name: 'Plank', icon: '🧘', duration: 45, reps: null, type: 'core' },
+                { name: 'Lunges', icon: '🦵', duration: null, reps: 12, type: 'strength' },
+                { name: 'High Knees', icon: '🏃', duration: 45, reps: null, type: 'cardio' },
+                { name: 'Tricep Dips', icon: '💺', duration: null, reps: 12, type: 'strength' }
+            ],
+            active: [
+                { name: 'Box Jumps', icon: '📦', duration: null, reps: 15, type: 'plyometric' },
+                { name: 'Diamond Push-ups', icon: '💎', duration: null, reps: 12, type: 'strength' },
+                { name: 'Jump Squats', icon: '🦘', duration: null, reps: 15, type: 'plyometric' },
+                { name: 'Burpee Tuck Jumps', icon: '🔥', duration: null, reps: 10, type: 'cardio' },
+                { name: 'Side Plank', icon: '🧘', duration: 60, reps: null, type: 'core' },
+                { name: 'Walking Lunges', icon: '🚶', duration: null, reps: 20, type: 'strength' },
+                { name: 'Spiderman Push-ups', icon: '🕷️', duration: null, reps: 10, type: 'strength' },
+                { name: 'V-ups', icon: '⬆️', duration: null, reps: 15, type: 'core' }
+            ]
+        };
+
+        let workout = [];
+        let currentExerciseIndex = -1;
+        let timerInterval = null;
+        let timerSeconds = 0;
+        let repCount = 0;
+        let cameraStream = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isLoggedIn()) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            const user = getCurrentUser();
+
+            // Display user stats
+            document.getElementById('userBMI').textContent = user.bmi || '--';
+
+            // Calculate calories to burn based on goal
+            let calories = 300;
+            if (user.goal === 'lose_weight') calories = 500;
+            if (user.goal === 'gain_muscle') calories = 400;
+            document.getElementById('targetCalories').textContent = calories;
+
+            // Workout time from profile
+            document.getElementById('workoutTime').textContent = user.workoutTime || '30';
+
+            generateWorkout();
+        });
+
+        function generateWorkout() {
+            const user = getCurrentUser();
+            const todayKey = getTodayKey();
+
+            // Check for saved workout
+            const savedData = getFromStorage(`biteburn_workout_${todayKey}`);
+            if (savedData && savedData.exercises) {
+                workout = savedData.exercises;
+                renderExercises();
+                updateProgress();
+                return;
+            }
+
+            const level = user.activityLevel || 'beginner';
+
+            // Map activity level to exercise category
+            let exerciseCategory = 'beginner';
+            if (level === 'moderate') exerciseCategory = 'moderate';
+            if (level === 'active' || level === 'very_active') exerciseCategory = 'active';
+
+            // Get exercise pool
+            let pool = [...EXERCISES[exerciseCategory]];
+
+            // Filter based on injuries
+            const injuries = user.injuries || [];
+            if (injuries.includes('knee_pain')) {
+                pool = pool.filter(e => !['Squats', 'Lunges', 'Jump Squats', 'Box Jumps'].includes(e.name));
+            }
+            if (injuries.includes('shoulder_pain')) {
+                pool = pool.filter(e => !['Push-ups', 'Diamond Push-ups', 'Tricep Dips'].includes(e.name));
+            }
+            if (injuries.includes('back_pain')) {
+                pool = pool.filter(e => !['Burpees', 'V-ups', 'Mountain Climbers'].includes(e.name));
+            }
+
+            // Select exercises based on workout time
+            const workoutTime = parseInt(user.workoutTime) || 30;
+            const exerciseCount = Math.min(Math.floor(workoutTime / 5), pool.length);
+
+            // Shuffle and select
+            pool.sort(() => Math.random() - 0.5);
+            workout = pool.slice(0, exerciseCount).map((ex, i) => ({
+                ...ex,
+                id: i,
+                completed: false,
+                timeSpent: 0
+            }));
+
+            saveWorkout();
+            renderExercises();
+            updateProgress();
+        }
+
+        function saveWorkout() {
+            const todayKey = getTodayKey();
+            saveData(`biteburn_workout_${todayKey}`, {
+                date: todayKey,
+                exercises: workout
+            });
+        }
+
+        function regenerateWorkout() {
+            if (confirm('Generate a new workout? Current progress will be lost.')) {
+                // Clear saved workout
+                const todayKey = getTodayKey();
+                localStorage.removeItem(`biteburn_workout_${todayKey}`);
+
+                generateWorkout();
+                showToast('New workout generated!', 'success');
+            }
+        }
+
+        function renderExercises() {
+            const container = document.getElementById('exerciseList');
+            document.getElementById('exercisesDone').textContent =
+                `${workout.filter(e => e.completed).length} of ${workout.length} exercises`;
+
+            container.innerHTML = workout.map((ex, index) => `
+        <div class="exercise-card ${ex.completed ? 'completed' : ''} ${index === currentExerciseIndex ? 'active' : ''}" 
+          data-index="${index}">
+          <div class="exercise-icon">${ex.icon}</div>
+          <div class="exercise-info">
+            <div class="exercise-name">${ex.name}</div>
+            <div class="exercise-details">
+              ${ex.duration ? `⏱️ ${ex.duration} seconds` : `🔄 ${ex.reps} reps`}
+              • ${ex.type}
+            </div>
+          </div>
+          <div class="exercise-timer">
+            <div class="timer-display">${ex.completed ? '✓ Done' : (ex.duration ? formatTime(ex.duration) : `${ex.reps} reps`)}</div>
+            ${ex.completed
+                    ? '<span class="completed-badge">Completed</span>'
+                    : `<button class="start-btn" onclick="startExercise(${index})">Start</button>`
+                }
+          </div>
+        </div>
+      `).join('');
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function startExercise(index) {
+            currentExerciseIndex = index;
+            const exercise = workout[index];
+
+            // Show timer modal
+            document.getElementById('timerExerciseName').textContent = exercise.name;
+            timerSeconds = exercise.duration || 0;
+            repCount = 0;
+
+            document.getElementById('bigTimer').textContent = formatTime(timerSeconds);
+            document.getElementById('modalRepCounter').textContent = `Reps: 0 / ${exercise.reps || '--'}`;
+            document.getElementById('timerControlBtn').textContent = 'Start';
+
+            document.getElementById('timerModal').classList.add('active');
+
+            // Try to start camera
+            startCamera();
+
+            renderExercises();
+        }
+
+        async function startCamera() {
+            try {
+                const preview = document.getElementById('cameraPreview');
+
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    preview.innerHTML = '<video autoplay playsinline></video>';
+                    const video = preview.querySelector('video');
+                    video.srcObject = cameraStream;
+                }
+            } catch (err) {
+                console.log('Camera not available:', err);
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+
+            document.getElementById('cameraPreview').innerHTML = `
+        <div class="camera-placeholder">
+          <div class="camera-placeholder-icon">📷</div>
+          <p>Camera will activate during exercise</p>
+        </div>
+      `;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timerControlBtn');
+            const exercise = workout[currentExerciseIndex];
+
+            if (timerInterval) {
+                // Pause
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.textContent = 'Resume';
+            } else {
+                // Start/Resume
+                btn.textContent = 'Pause';
+
+                if (exercise.duration) {
+                    // Timed exercise - countdown
+                    timerInterval = setInterval(() => {
+                        timerSeconds--;
+                        document.getElementById('bigTimer').textContent = formatTime(timerSeconds);
+
+                        if (timerSeconds <= 0) {
+                            completeExercise();
+                        }
+                    }, 1000);
+                } else {
+                    // Rep-based - count up with simulated detection
+                    timerInterval = setInterval(() => {
+                        // Simulate rep counting (in reality this would use pose detection)
+                        if (Math.random() > 0.7) {
+                            repCount++;
+                            document.getElementById('modalRepCounter').textContent = `Reps: ${repCount} / ${exercise.reps}`;
+                            document.getElementById('repCounter').textContent = `Reps: ${repCount}`;
+
+                            if (repCount >= exercise.reps) {
+                                completeExercise();
+                            }
+                        }
+                    }, 800);
+                }
+            }
+        }
+
+        function skipExercise() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('timerModal').classList.remove('active');
+            stopCamera();
+            currentExerciseIndex = -1;
+            renderExercises();
+        }
+
+        function completeExercise() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+
+            workout[currentExerciseIndex].completed = true;
+            document.getElementById('timerModal').classList.remove('active');
+            stopCamera();
+
+            updateProgress();
+            saveWorkout();
+            renderExercises();
+
+            showToast('Exercise completed! 💪', 'success');
+
+            // Check for workout completion
+            if (workout.every(e => e.completed)) {
+                unlockAchievement('workout_complete', 'Workout Warrior', 'Completed a full workout session', '🏆');
+                showToast('🎉 Workout Complete! Amazing job!', 'success');
+            }
+
+            currentExerciseIndex = -1;
+        }
+
+        function updateProgress() {
+            const completed = workout.filter(e => e.completed).length;
+            const total = workout.length;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            const circumference = 70 * 2 * Math.PI;
+            const offset = circumference - (percent / 100) * circumference;
+
+            document.getElementById('workoutProgressCircle').style.strokeDashoffset = offset;
+            document.getElementById('workoutPercent').textContent = `${percent}%`;
+            document.getElementById('exercisesDone').textContent = `${completed} of ${total} exercises`;
+        }
+    </script>
+</body>
+
+</html>

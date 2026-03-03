@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your achievements at Bite & Burn">
+    <title>Achievements - Bite & Burn</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+        })();
+    </script>
+    <style>
+        :root {
+            --primary: #eab308;
+            --primary-dark: #ca8a04;
+            --primary-light: #facc15;
+            --primary-glow: rgba(234, 179, 8, 0.3);
+            --gradient-primary: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+        }
+
+        .achievements-page {
+            padding: 100px 0 40px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .trophy-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 24px;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .achievement-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card.unlocked {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(202, 138, 4, 0.05) 100%);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+        }
+
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .achievement-card.unlocked .achievement-icon {
+            background: var(--gradient-primary);
+        }
+
+        .achievement-card.locked .achievement-icon {
+            background: var(--gray-700);
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            margin-bottom: 8px;
+        }
+
+        .achievement-date {
+            font-size: 0.75rem;
+            color: var(--primary);
+        }
+
+        .locked-text {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .section-title {
+            margin: 40px 0 24px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.body.classList.add('light-theme');
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                    aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <a href="javascript:history.back()" class="btn btn-icon btn-secondary">←</a>
+                    <a href="../index.html" class="logo">
+                        <div class="logo-icon">
+                            <img src="../assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+                            <img src="../assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+                        </div>
+                        <span>Bite & Burn</span>
+                    </a>
+                </div>
+
+                <nav>
+                    <ul class="nav-links" id="navLinks">
+                        <li><a href="food-planning.html">Food Planning</a></li>
+                        <li><a href="workout.html">Workout</a></li>
+                        <li><a href="daily-routine.html">Daily Routine</a></li>
+                        <li><a href="analyzing.html">Analyzing</a></li>
+                        <li><a href="achievements.html">Achievements</a></li>
+                    </ul>
+                </nav>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <a href="../index.html" class="btn btn-icon btn-secondary" title="Home">🏠</a>
+                    <div class="auth-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="achievements-page">
+        <div class="container">
+            <div class="page-header">
+                <span class="trophy-icon">🏆</span>
+                <h1>Your Achievements</h1>
+                <p class="text-muted">Unlock badges by staying consistent and hitting goals!</p>
+
+                <button class="btn btn-primary" onclick="shareProgress()"
+                    style="margin-top: 16px; background: var(--gradient-primary);">
+                    📢 Share Progress
+                </button>
+
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-number" id="unlockedCount">0</div>
+                        <div class="stat-label">Unlocked</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="percentComplete">0%</div>
+                        <div class="stat-label">Complete</div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title">🌟 Unlocked Achievements</h2>
+            <div class="achievements-grid" id="unlockedGrid">
+                <!-- Unlocked achievements will be rendered here -->
+            </div>
+
+            <h2 class="section-title">🔒 Locked Achievements</h2>
+            <div class="achievements-grid" id="lockedGrid">
+                <!-- Locked achievements will be rendered here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Toggle -->
+    <button class="chat-toggle" id="chatToggle" style="background: var(--gradient-primary);">💬</button>
+
+    <!-- Chat Popup -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header" style="background: var(--gradient-primary);">
+            <span>Bite & Burn Assistant</span>
+            <button class="modal-close" id="chatClose">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">🏆 Keep unlocking achievements by staying active!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="form-input" placeholder="Type a message..." id="chatInput">
+            <button class="btn btn-primary btn-icon" id="chatSend"
+                style="background: var(--gradient-primary);">➤</button>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        // All possible achievements
+        const ALL_ACHIEVEMENTS = [
+            { id: 'first_signup', title: 'Journey Begins', description: 'Completed your health profile', icon: '🌟' },
+            { id: 'all_tasks_done', title: 'Task Master', description: 'Completed all daily tasks', icon: '✅' },
+            { id: 'planner', title: 'Master Planner', description: 'Created 10+ daily tasks', icon: '📋' },
+            { id: 'workout_complete', title: 'Workout Warrior', description: 'Completed a full workout session', icon: '🏆' },
+            { id: 'health_check', title: 'Health Conscious', description: 'Used the AI health analyzer', icon: '🏥' },
+            { id: 'meal_complete', title: 'Nutrition Master', description: 'Followed a full day meal plan', icon: '🍽️' },
+            { id: 'week_streak', title: 'Weekly Warrior', description: 'Logged in 7 days in a row', icon: '🔥' },
+            { id: 'early_bird', title: 'Early Bird', description: 'Completed morning routine before 8 AM', icon: '🌅' },
+            { id: 'hydration_hero', title: 'Hydration Hero', description: 'Tracked water intake for a week', icon: '💧' },
+            { id: 'goal_reached', title: 'Goal Crusher', description: 'Reached your target weight', icon: '🎯' },
+            { id: 'community', title: 'Community Member', description: 'Shared your progress with others', icon: '👥' },
+            { id: 'explorer', title: 'Feature Explorer', description: 'Used all features of the app', icon: '🗺️' }
+        ];
+
+        function shareProgress() {
+            // Simulate sharing
+            const unlocked = document.getElementById('unlockedCount').textContent;
+            const text = `I've unlocked ${unlocked} achievements on Bite & Burn! 🔥 Join me on my fitness journey!`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Bite & Burn Progress',
+                    text: text,
+                    url: window.location.href
+                }).catch(err => console.log('Share failed/cancelled', err));
+            } else {
+                // Fallback
+                navigator.clipboard.writeText(text);
+                showToast('Progress copied to clipboard! 📋', 'success');
+            }
+
+            // Unlock achievement
+            unlockAchievement('community', 'Community Member', 'Shared your progress with others', '👥');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const unlockedAchievements = getFromStorage(STORAGE_KEYS.ACHIEVEMENTS) || [];
+            const unlockedIds = unlockedAchievements.map(a => a.id);
+
+            const unlocked = ALL_ACHIEVEMENTS.filter(a => unlockedIds.includes(a.id));
+            const locked = ALL_ACHIEVEMENTS.filter(a => !unlockedIds.includes(a.id));
+
+            // Update stats
+            document.getElementById('unlockedCount').textContent = unlocked.length;
+            document.getElementById('totalCount').textContent = ALL_ACHIEVEMENTS.length;
+            document.getElementById('percentComplete').textContent =
+                `${Math.round((unlocked.length / ALL_ACHIEVEMENTS.length) * 100)}%`;
+
+            // Render unlocked
+            const unlockedGrid = document.getElementById('unlockedGrid');
+            if (unlocked.length === 0) {
+                unlockedGrid.innerHTML = '<p class="text-muted">No achievements unlocked yet. Start your journey!</p>';
+            } else {
+                unlockedGrid.innerHTML = unlocked.map(a => {
+                    const data = unlockedAchievements.find(ua => ua.id === a.id);
+                    return `
+            <div class="achievement-card unlocked">
+              <div class="achievement-icon">${a.icon}</div>
+              <div class="achievement-info">
+                <div class="achievement-title">${a.title}</div>
+                <div class="achievement-desc">${a.description}</div>
+                <div class="achievement-date">Unlocked ${formatDate(data?.date || new Date())}</div>
+              </div>
+            </div>
+          `;
+                }).join('');
+            }
+
+            // Render locked
+            const lockedGrid = document.getElementById('lockedGrid');
+            lockedGrid.innerHTML = locked.map(a => `
+        <div class="achievement-card locked">
+          <div class="achievement-icon">🔒</div>
+          <div class="achievement-info">
+            <div class="achievement-title">${a.title}</div>
+            <div class="achievement-desc">${a.description}</div>
+            <div class="locked-text">Not yet unlocked</div>
+          </div>
+        </div>
+      `).join('');
+        });
+    </script>
+</body>
+
+</html>

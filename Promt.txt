@@ -1,0 +1,285 @@
+I need to build health and fitness developing ai based website. we give to user food plan and workout plan . bellow the details of the website
+Home page prompt,
+I need to create a website. It's called Bite & Burn.  On the top right corner Display Sign in andsign up buttons seperately.Starting from the Top left corner,it has to display a shortcuts called food planning, work out, daily routine, achievements, all seperate and horizontal direction. In the left side of the page,some what up and middle placing, display the inspirational motto to the "Eat Smarter, Wook Harder and  Live Heathier." Under the motto the get started button must be there. On the right side of the page infront of the motto and get started button. add a simple but beautiful animation. Under the website the purposes of the website must be started  Seperately in four small boxes designed beautifully. In the first box food managment, second box workout plan, third box daily routine management, fourth box building healthy life. It has to be started ,they are the  purposes of the website. Add some user friendly design on the website homepage to make it  website more beautiful and complete the  whole home page. The color theme of the site is green .There needs to be a copt copy right claim "Deltians AI Force". Add contact numbers "0771364629 and 0715120657".After "sign up" is clicked the servey appear below.1. Basic Information
+
+What is your name? (optional)
+
+What is your age?
+
+What is your gender?
+
+Which country do you live in?
+
+What is your height? (cm / ft)
+
+What is your current weight? (kg / lbs)
+
+2. Your Goal 
+
+What is your main goal?
+
+Lose weight
+
+Gain muscle
+
+Stay fit / healthy
+
+Improve strength
+
+Improve stamina
+
+Other: ______
+
+Do you have a target weight? (optional)
+
+How quickly do you want to reach your goal?
+
+Slowly & safely
+
+Normal pace
+
+As fast as possible
+
+3. Health Information ❤️
+
+(Friendly tone helps trust)
+
+Do you have any medical conditions?
+
+Diabetes
+
+High blood pressure
+
+Thyroid
+
+Heart condition
+
+Asthma
+
+None
+
+Other: ______
+
+Are you currently taking any medicines? (optional)
+
+Do you have any food allergies?
+
+Do you feel stress or sleep problems often?
+
+Yes / Sometimes / No
+
+4. Injuries & Physical Limitations 🦴
+
+Do you have any past or current injuries?
+
+Back pain
+
+Knee pain
+
+Shoulder pain
+
+Joint problems
+
+None
+
+Other: ______
+
+Have you ever had surgery? (optional)
+
+Are there any movements/exercises you cannot do comfortably?
+
+5. Fitness Level 💪
+
+How active are you?
+
+Beginner (little/no exercise)
+
+Moderate (1-3 days/week)
+
+Active (4-6 days/week)
+
+Very active (daily)
+
+Where do you prefer to work out?
+
+Home
+
+Gym
+
+Outdoors
+
+Mix
+
+How much time can you give daily?
+
+15–20 min
+
+30 min
+
+45 min
+
+60+ min
+
+6. Food & Lifestyle 🍎
+
+(Important for country-based diet AI)
+
+What type of diet do you follow?
+
+Vegetarian
+
+Non-vegetarian
+
+Vegan
+
+Mixed
+
+Any foods you do not eat? (religion / personal choice)
+
+How many meals do you eat daily?
+
+Do you drink alcohol?
+
+Do you smoke?
+
+7. Preferences 🌍
+
+Do you want:
+
+Simple home foods
+
+Budget-friendly meals
+
+High-protein diet
+
+Traditional foods from your country
+
+What motivates you most?
+
+Visible results
+
+Health improvement
+
+Energy & mood
+
+Discipline
+
+8. Final (Friendly Closing)
+
+What challenges stop you from staying fit?
+
+Anything else you want us to know to personalize your plan?
+ After clicking login, the login  details appear.After sign up the get started button. must be changed into "plan for tomorrow" button. When you click that button it shows a planning page.
+Daily routine page prompt, 
+
+On the top left of the "Good (Evening/Morning / Night) 'user name'"based on the time of the day so it matches. On the top right corner the User name, profile pic and when you click the profile pic the profile pic must pop up and show the profile pic.after profile pic open there is a  button below the picture to add their own avatar or user's photo.The user can  add their own daily routine like weekend and week day daily routine. and it  must be able to be saved on the site. page has the "Plan for Tomorrow Tasks " that add there routines for next days must be added to the daily routines.The daily routine tasks must be displayed on the right side of the page. The left side must have the daily routine process display tab and the tab has a circle that shows 
+the percentage of how many completed task throughout the day.There must be a box that  the  user can add more daily routine and it must state that.When the tasks of the work for tomorrow is increased the outer glow of the page must go from green to red slightly increasing process like. On the page their has to be an achievement pop up when you click on it. it also  shows about the achievents just slighty. Contacts  and copy right claim must be displayed below on every page. 
+
+Planing Page Prompt,
+This is the page that shows ap after you click "The plan for tomorrow' button Add plus button and infront of that add daily routine, needs to have simillar 3 other plus buttons (that means the user can add 3 daily routines like weekdays, special days, weekends.) After the user give the plus mark and add the routine, it needs to be saved on  the website,'Custom daily routine" button must be added. The color theme-for the page is blue.Interface must be user friendly.Below the planning page there needs to be a place where the user can add what food  ingredients are avalible for the user at home, so the food planning can be created.
+
+Workout plan prompt, 
+
+A workout plan must be created from the details taken from the survey like weight, height and food habits for the user daily. The workout  exercises must be displayed on the right side one after the other.  Each exercise must have a start batton. When the start button is clicked a timer appears counter that will differ.depending on. the exercise. (The exercise  counter works using the user's camera that shows the us user's exercising ways and upon that the counting starts.) Once the exercises are done it shows as completed. Same as the daily routine page this also has  a processing tab. Theme color must be a color that matches the gym like  red or black.
+
+Analizing page prompt, 
+
+This is Ai based Tab That Analyse medical health based on report and symptoms.There must be a shortcut  for this tab that must under page seperately. There must be 2 options. 
+1.adding the medical report photo.
+2.the adding it by systoms in text. Add a chat box to the symtoms and with that chat box the total analyzed details will appear below. The analization will give the user  information about the conditions and must add below the that going to see a proffesional is the best  choice.
+
+Food Planning Page Prompt, 
+
+The goal of this page is to create  food planed based  on the  survery informating on country, workout info, daily routine info and analized medical report info. According to the country given by the user the food  plans change according to user's country. It must be mandador that the food must be  user's daily basis and their country and traditions (Sri Lanka – Rice and Curry
+Main daily meal. Rice served with vegetable, fish, or meat curries, sambol, and spicy flavors.
+
+India – Biryani
+Fragrant rice cooked with spices, meat or vegetables. Rich, aromatic, and very popular.
+
+Japan – Sushi
+Vinegared rice with raw fish or seafood. Clean taste, artistic presentation.
+
+China – Peking Duck
+Crispy roasted duck served with thin pancakes, sauce, and vegetables.
+
+Italy – Pizza
+Flat bread with tomato sauce, cheese, and toppings. Originated in Naples.
+
+France – Croissant
+Buttery, flaky pastry eaten for breakfast. Famous worldwide.
+
+United Kingdom – Fish and Chips
+Deep-fried fish with thick potato fries. Classic street food.
+
+United States – Hamburger
+Beef patty inside a bun with cheese, lettuce, and sauce. Fast food icon.
+
+Mexico – Tacos
+Folded tortilla filled with meat, beans, cheese, salsa, and vegetables.
+
+Thailand – Pad Thai
+Stir-fried noodles with egg, peanuts, lime, and shrimp or chicken. Sweet, sour, salty mix.
+
+South Korea – Kimchi
+Fermented spicy cabbage. Eaten daily with almost every meal.
+
+Indonesia – Nasi Goreng
+Fried rice with egg, vegetables, and meat. Often served with sambal.
+
+Malaysia – Nasi Lemak
+Rice cooked in coconut milk, served with sambal, peanuts, egg, and anchovies.
+
+Turkey – Kebab
+Grilled meat (lamb or chicken) with spices, bread, and vegetables.
+
+Greece – Moussaka
+Baked dish with eggplant, minced meat, and creamy sauce.
+
+Spain – Paella
+Rice cooked with saffron, seafood, chicken, and vegetables in a wide pan.
+
+Germany – Bratwurst
+Grilled sausage usually eaten with bread and mustard.
+
+Russia – Borscht
+Beetroot soup, usually red, sometimes served with sour cream.
+
+Brazil – Feijoada
+Black bean stew with pork, served with rice and orange slices.
+
+Argentina – Asado
+Traditional barbecue with different cuts of beef cooked slowly over fire.
+
+Egypt – Koshari
+Mix of rice, lentils, pasta, and spicy tomato sauce. Popular street food.
+
+Ethiopia – Injera with Doro Wat
+Sour flatbread served with spicy chicken stew. Eaten by hand.
+
+Morocco – Couscous
+Steamed semolina grains served with vegetables and meat stew.
+
+Australia – Meat Pie
+Baked pastry filled with minced meat and gravy. Common snack.
+
+New Zealand – Hangi
+Traditional Maori food cooked underground using heated stones.)  It is also mandatory the food. must be according to the daily routing like if there are not doing  many task then the food plan must be  simple etc. If the user has Sickness or allegies the food must be  according to that.  Reminder that the food must be meals avalible in user's country. If there are medicine, the user needs to take, remind the user in that food plan. Also give health tips if the user is sick. (ex: Fever – Drink plenty of water, take enough rest, and keep your body cool. Use paracetamol only if needed and avoid dehydration.
+
+Common Cold – Drink warm fluids, inhale steam, and rest well. Wash hands often to prevent spreading.
+
+Cough – Drink warm water with honey, avoid cold drinks, and keep your throat warm.
+
+Sore Throat – Gargle with warm salt water, drink warm liquids, and avoid spicy or oily foods.
+
+Headache – Rest in a quiet place, drink enough water, and avoid too much screen time.
+
+Stomach Ache – Eat light foods, drink warm water, and avoid oily or heavy meals.
+
+Diarrhea – Drink plenty of fluids, use oral rehydration solution (ORS), and avoid dairy and spicy foods.
+
+Body Pain – Take rest, drink warm fluids, and do gentle stretching after recovery.
+
+Flu – Rest well, drink lots of warm fluids, and keep your body warm.
+
+Indigestion – Eat small meals, avoid overeating, and do light walking after meals.) The process circle just like the ones in the workout plan must be displayed on the left side. The list of the meals of the food plan is on right side just like the workout plan. The process circle must show the carbs, proteins and the calorie intake of the user based on what the user had eaten.
+Every page must have the back button, acheivement button, home button of the top. Under the pages a dd details like our contact, page address and copyright claim just like the home page. There must also be a button for the chat box in every page. The chat box must be user friendly and pop up.

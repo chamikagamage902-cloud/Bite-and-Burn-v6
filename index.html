@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Bite & Burn - Your AI-powered health and fitness companion. Get personalized food plans, workout routines, and health analysis.">
+  <title>Bite & Burn - Eat Smarter, Work Harder, Live Healthier</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/animations.css">
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+    })();
+  </script>
+</head>
+
+<body>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      if (savedTheme === 'light') document.body.classList.add('light-theme');
+    })();
+  </script>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <a href="index.html" class="logo">
+          <div class="logo-icon">
+            <img src="assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+            <img src="assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+          </div>
+          <span>Bite & Burn</span>
+        </a>
+
+
+        <nav>
+          <ul class="nav-links" id="navLinks">
+            <li><a href="pages/food-planning.html">Food Planning</a></li>
+            <li><a href="pages/workout.html">Workout</a></li>
+            <li><a href="pages/daily-routine.html">Daily Routine</a></li>
+            <li><a href="pages/analyzing.html">Analyzing</a></li>
+            <li><a href="pages/achievements.html">Achievements</a></li>
+          </ul>
+        </nav>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button id="guestThemeToggle" class="theme-toggle-btn guest-only" onclick="toggleTheme()"
+            title="Toggle Theme">
+            🌙
+          </button>
+          <div class="auth-buttons">
+            <a href="pages/signin.html" class="btn btn-secondary">Sign In</a>
+            <a href="pages/signup.html" class="btn btn-primary mobile-hidden">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-motto fade-in-up">
+            Eat <span class="highlight">Smarter</span>,<br>
+            Work <span class="highlight">Harder</span>,<br>
+            Live <span class="highlight">Healthier</span>.
+          </h1>
+          <p class="hero-subtitle fade-in-up fade-in-delay-1">
+            Your AI-powered companion for personalized nutrition, smart workouts,
+            and building healthy habits that last a lifetime.
+          </p>
+          <a href="pages/signup.html" class="btn btn-primary btn-lg fade-in-up fade-in-delay-2" id="getStartedBtn">
+            Get Started
+            <span>→</span>
+          </a>
+        </div>
+
+        <div class="hero-animation">
+          <!-- Animated Background Circles -->
+          <div class="anim-circle anim-circle-1"></div>
+          <div class="anim-circle anim-circle-2"></div>
+          <div class="anim-circle anim-circle-3"></div>
+
+          <!-- Central Heart -->
+          <div class="anim-heart">
+            <span class="pulse-ring"></span>
+            <span class="pulse-ring"></span>
+            <span class="pulse-ring"></span>
+            💚
+          </div>
+
+          <!-- Floating Icons -->
+          <div class="anim-icons">
+            <span class="anim-icon anim-icon-1">🥗</span>
+            <span class="anim-icon anim-icon-2">💪</span>
+            <span class="anim-icon anim-icon-3">🏃</span>
+            <span class="anim-icon anim-icon-4">🧘</span>
+          </div>
+
+          <!-- DNA Helix -->
+          <div class="dna-helix">
+            <div class="dna-strand">
+              <div class="dna-node"></div>
+              <div class="dna-node"></div>
+              <div class="dna-node"></div>
+              <div class="dna-node"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="text-center mb-2">What We Offer</h2>
+      <p class="text-center text-muted mb-2">Comprehensive tools to transform your health journey</p>
+
+      <div class="features-grid">
+        <div class="card feature-card fade-in-up fade-in-delay-1">
+          <div class="feature-icon">🍽️</div>
+          <h3 class="feature-title">Food Management</h3>
+          <p class="feature-desc">
+            AI-powered meal planning based on your country's cuisine, health conditions,
+            and personal preferences. Never wonder what to eat again.
+          </p>
+        </div>
+
+        <div class="card feature-card fade-in-up fade-in-delay-2">
+          <div class="feature-icon">🏋️</div>
+          <h3 class="feature-title">Workout Plan</h3>
+          <p class="feature-desc">
+            Personalized exercise routines tailored to your fitness level, goals,
+            and any physical limitations. Build strength safely.
+          </p>
+        </div>
+
+        <div class="card feature-card fade-in-up fade-in-delay-3">
+          <div class="feature-icon">📅</div>
+          <h3 class="feature-title">Daily Routine</h3>
+          <p class="feature-desc">
+            Organize your day with smart scheduling. Track habits, set reminders,
+            and build consistency for lasting change.
+          </p>
+        </div>
+
+        <div class="card feature-card fade-in-up fade-in-delay-4">
+          <div class="feature-icon">🌱</div>
+          <h3 class="feature-title">Healthy Life</h3>
+          <p class="feature-desc">
+            Holistic approach to wellness including stress management, sleep optimization,
+            and health analysis tools.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-copyright">
+          © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+        </div>
+        <div class="footer-contact">
+          Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chat Toggle Button -->
+  <button class="chat-toggle" id="chatToggle" aria-label="Open chat">
+    💬
+  </button>
+
+  <!-- Chat Popup -->
+  <div class="chat-popup" id="chatPopup">
+    <div class="chat-header">
+      <span>Bite & Burn Assistant</span>
+      <button class="modal-close" id="chatClose">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-message bot">
+        👋 Hi! I'm your Bite & Burn assistant. How can I help you today?
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" class="form-input" placeholder="Type a message..." id="chatInput">
+      <button class="btn btn-primary btn-icon" id="chatSend">➤</button>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    // Check if user is logged in and update button
+    document.addEventListener('DOMContentLoaded', function () {
+      const user = localStorage.getItem('biteburn_user');
+      const getStartedBtn = document.getElementById('getStartedBtn');
+      const guestToggle = document.getElementById('guestThemeToggle');
+
+      if (user) {
+        getStartedBtn.textContent = 'Plan for Tomorrow';
+        getStartedBtn.href = 'pages/planning.html';
+        if (guestToggle) guestToggle.style.display = 'none';
+      }
+
+      // Initialize icon based on current theme
+      if (guestToggle && typeof updateThemeToggleIcon === 'function') {
+        const isLight = document.body.classList.contains('light-theme');
+        guestToggle.innerHTML = isLight ? '🌙' : '☀️';
+      }
+    });
+  </script>
+</body>
+
+</html>

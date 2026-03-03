@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to Bite & Burn - Continue your health journey">
+    <title>Sign In - Bite & Burn</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+        })();
+    </script>
+    <style>
+        .signin-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 40px;
+        }
+
+        .signin-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-2xl);
+            padding: 40px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .signin-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .signin-logo {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            overflow: hidden;
+        }
+
+        .signin-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            color: var(--gray-500);
+        }
+
+        .signin-divider::before,
+        .signin-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-700);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--gray-400);
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.body.classList.add('light-theme');
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="mobile-menu-btn mobile-hidden" id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                    aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <a href="../index.html" class="logo">
+                    <div class="logo-icon">
+                        <img src="../assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+                        <img src="../assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+                    </div>
+                    <span>Bite & Burn</span>
+                </a>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="auth-buttons mobile-hidden">
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="signin-container">
+        <div class="signin-card fade-in-up">
+            <div class="signin-header">
+                <div class="signin-logo">
+                    <img src="../assets/logo.png" alt="Bite & Burn Logo"
+                        style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <h1>Welcome Back!</h1>
+                <p class="text-muted">Sign in to continue your health journey</p>
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                Invalid email or password. Please try again.
+            </div>
+
+            <form id="signinForm">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" name="email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" name="password" placeholder="Enter your password"
+                        required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                    Sign In →
+                </button>
+            </form>
+
+            <div class="signin-divider">or</div>
+
+            <p class="signup-link">
+                Don't have an account? <a href="signup.html">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        document.getElementById('signinForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = this.email.value;
+            const password = this.password.value;
+            const errorMessage = document.getElementById('errorMessage');
+            const submitBtn = this.querySelector('button[type="submit"]');
+
+            // Disable button
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Signing In...';
+
+            try {
+                // Use multi-user login
+                const user = await loginUser(email, password);
+
+                if (user) {
+                    // Success - redirect to planning or dashboard
+                    window.location.href = 'planning.html';
+                }
+            } catch (error) {
+                // Show error
+                errorMessage.textContent = error.message.includes('fetch') ? 'Cannot connect to server.' : error.message;
+                errorMessage.classList.add('show');
+                setTimeout(() => errorMessage.classList.remove('show'), 3000);
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // Redirect if already logged in
+        if (isLoggedIn()) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plan your tomorrow with Bite & Burn">
+    <title>Planning - Bite & Burn</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+        })();
+    </script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .planning-page {
+            padding: 100px 0 40px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .planning-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .routine-slot {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .routine-slot:hover {
+            border-color: var(--primary);
+        }
+
+        .slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .slot-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .slot-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .add-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .task-count {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        .mini-task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .mini-task {
+            background: var(--gray-700);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mini-task-icon {
+            opacity: 0.6;
+        }
+
+        .empty-slot {
+            text-align: center;
+            color: var(--gray-500);
+            padding: 20px;
+        }
+
+        /* Food Ingredients Section */
+        .ingredients-section {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .ingredients-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .ingredient-tag {
+            background: var(--gray-700);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-full);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+        }
+
+        .ingredient-remove {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .ingredient-remove:hover {
+            color: var(--danger);
+        }
+
+        .add-ingredient-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .add-ingredient-form input {
+            flex: 1;
+        }
+
+        /* Custom Routine Modal */
+        .custom-routine-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 16px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-routine-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        /* Modal for adding tasks */
+        .task-modal .modal {
+            max-width: 500px;
+        }
+
+        .modal-task-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+
+        .modal-task-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gray-700);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .modal-task-item input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--gray-100);
+            font-size: 0.875rem;
+        }
+
+        .modal-task-item input[type="text"]:focus {
+            outline: none;
+        }
+
+        .modal-task-item input[type="time"] {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-sm);
+            color: var(--gray-100);
+            padding: 4px 8px;
+        }
+
+        .remove-task-btn {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        .remove-task-btn:hover {
+            color: var(--danger);
+        }
+
+        .add-more-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 2px dashed var(--gray-600);
+            border-radius: var(--radius-md);
+            color: var(--gray-400);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-more-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Generate Tomorrow Plan Button */
+        .generate-plan-btn {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 16px 28px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .generate-plan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.3);
+        }
+
+        .generate-plan-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Tomorrow Plan Section */
+        .tomorrow-plan {
+            margin-top: 32px;
+            animation: fadeSlideIn 0.5s ease;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .plan-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-status {
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .plan-status.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .plan-status.accepted {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .plan-meals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .plan-meal-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .plan-meal-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .plan-meal-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .plan-meal-type .type-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .plan-meal-name {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .plan-meal-desc {
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            margin-bottom: 10px;
+        }
+
+        .plan-nutrition-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .plan-nut-tag {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.06);
+            font-weight: 500;
+        }
+
+        .plan-nut-tag.cal {
+            color: #f97316;
+        }
+
+        .plan-nut-tag.pro {
+            color: #3b82f6;
+        }
+
+        .plan-nut-tag.carb {
+            color: #22c55e;
+        }
+
+        .plan-ingredients-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-300);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .plan-ingredients-list {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .plan-ing-item {
+            font-size: 0.78rem;
+            color: var(--gray-400);
+            padding: 3px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .plan-ing-item:last-child {
+            border-bottom: none;
+        }
+
+        .plan-ing-amount {
+            color: var(--gray-300);
+            font-weight: 500;
+        }
+
+        .match-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            background: rgba(34, 197, 94, 0.12);
+            color: #22c55e;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        /* Action buttons */
+        .plan-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .plan-action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .plan-action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .plan-accept-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            flex: 1;
+        }
+
+        .plan-accept-btn:hover {
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .plan-reject-btn {
+            background: var(--gray-700);
+            color: var(--gray-200);
+            border: 1px solid var(--gray-600);
+        }
+
+        .plan-reject-btn:hover {
+            background: var(--gray-600);
+        }
+
+        .plan-custom-btn {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+        }
+
+        .plan-custom-btn:hover {
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Custom Meal Form */
+        .custom-meal-form {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-top: 16px;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        .custom-meal-form h4 {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .custom-form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .custom-meal-type-select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--gray-700);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-md);
+            color: var(--gray-100);
+            font-size: 0.9rem;
+        }
+
+        .custom-form-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Responsive Modal Tasks */
+        @media (max-width: 480px) {
+            .modal-task-item {
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 16px;
+                align-items: flex-end;
+            }
+
+            .modal-task-item input[type="text"] {
+                flex: 1 1 100%;
+                font-size: 1rem;
+                border-bottom: 1px solid var(--gray-600);
+                padding-bottom: 8px;
+                margin-bottom: 4px;
+            }
+
+            .modal-task-item input[type="time"] {
+                flex: 1;
+                height: 44px;
+                /* Better touch target */
+            }
+
+            .remove-task-btn {
+                padding: 8px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.body.classList.add('light-theme');
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                    aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <a href="javascript:history.back()" class="btn btn-icon btn-secondary">←</a>
+                    <a href="../index.html" class="logo">
+                        <div class="logo-icon">
+                            <img src="../assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+                            <img src="../assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+                        </div>
+                        <span>Bite & Burn</span>
+                    </a>
+                </div>
+
+                <nav>
+                    <ul class="nav-links" id="navLinks">
+                        <li><a href="food-planning.html">Food Planning</a></li>
+                        <li><a href="workout.html">Workout</a></li>
+                        <li><a href="daily-routine.html">Daily Routine</a></li>
+                        <li><a href="analyzing.html">Analyzing</a></li>
+                        <li><a href="achievements.html">Achievements</a></li>
+                    </ul>
+                </nav>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-icon btn-secondary" onclick="showAchievementPopup()"
+                        title="Achievements">🏆</button>
+                    <a href="../index.html" class="btn btn-icon btn-secondary" title="Home">🏠</a>
+                    <div class="auth-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="planning-page">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Plan for Tomorrow 📅</h1>
+                    <p class="text-muted">Organize your routines and meals</p>
+                </div>
+                <a href="daily-routine.html" class="btn btn-primary">View Today's Tasks →</a>
+            </div>
+
+            <!-- Routine Slots -->
+            <div class="planning-grid">
+                <!-- Weekday Routine -->
+                <div class="routine-slot">
+                    <div class="slot-header">
+                        <div class="slot-title">
+                            <div class="slot-icon">📆</div>
+                            <span>Weekday Routine</span>
+                        </div>
+                        <button class="add-btn" onclick="openTaskModal('weekday')">+</button>
+                    </div>
+                    <p class="task-count" id="weekdayCount">0 tasks</p>
+                    <div class="mini-task-list" id="weekdayTasks">
+                        <div class="empty-slot">No tasks yet</div>
+                    </div>
+                </div>
+
+                <!-- Weekend Routine -->
+                <div class="routine-slot">
+                    <div class="slot-header">
+                        <div class="slot-title">
+                            <div class="slot-icon">🌅</div>
+                            <span>Weekend Routine</span>
+                        </div>
+                        <button class="add-btn" onclick="openTaskModal('weekend')">+</button>
+                    </div>
+                    <p class="task-count" id="weekendCount">0 tasks</p>
+                    <div class="mini-task-list" id="weekendTasks">
+                        <div class="empty-slot">No tasks yet</div>
+                    </div>
+                </div>
+
+                <!-- Special Days Routine -->
+                <div class="routine-slot">
+                    <div class="slot-header">
+                        <div class="slot-title">
+                            <div class="slot-icon">⭐</div>
+                            <span>Special Days</span>
+                        </div>
+                        <button class="add-btn" onclick="openTaskModal('special')">+</button>
+                    </div>
+                    <p class="task-count" id="specialCount">0 tasks</p>
+                    <div class="mini-task-list" id="specialTasks">
+                        <div class="empty-slot">No tasks yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Routine Button -->
+            <button class="custom-routine-btn" onclick="openCustomRoutineModal()">
+                ✨ Create Custom Daily Routine
+            </button>
+
+            <!-- Food Ingredients Section -->
+            <div class="ingredients-section mt-2">
+                <div class="section-header">
+                    <div>
+                        <h2>🥗 Available Ingredients</h2>
+                        <p class="text-muted">What do you have at home? This helps us plan your meals.</p>
+                    </div>
+                </div>
+
+                <div class="ingredients-grid" id="ingredientsList">
+                    <!-- Ingredients will be rendered here -->
+                </div>
+
+                <div class="add-ingredient-form">
+                    <input type="text" class="form-input" id="newIngredient"
+                        placeholder="Add an ingredient (e.g., rice, chicken, tomatoes)">
+                    <button class="btn btn-primary" onclick="addIngredient()">Add</button>
+                </div>
+
+                <button class="generate-plan-btn" id="generatePlanBtn" onclick="generateTodayPlan()">
+                    🍴 Generate Today's Meal Plan
+                </button>
+            </div>
+
+            <!-- Today's Meal Plan Result -->
+            <div id="todayPlanArea"></div>
+        </div>
+    </main>
+
+    <!-- Task Modal -->
+    <div class="modal-overlay task-modal" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Tasks</h3>
+                <button class="modal-close" onclick="closeTaskModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-task-list" id="modalTaskList">
+                    <!-- Tasks will be added here -->
+                </div>
+                <button class="add-more-btn" onclick="addTaskToModal()">+ Add Another Task</button>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="saveModalTasks()">
+                    Save Tasks
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Toggle -->
+    <button class="chat-toggle" id="chatToggle" aria-label="Open chat">💬</button>
+
+    <!-- Chat Popup -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header">
+            <span>Bite & Burn Assistant</span>
+            <button class="modal-close" id="chatClose">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">👋 Hi! Need help with your planning?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="form-input" placeholder="Type a message..." id="chatInput">
+            <button class="btn btn-primary btn-icon" id="chatSend">➤</button>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../data/country-foods.js"></script>
+    <script>
+        let routines = {};
+        let ingredients = [];
+        let currentRoutineType = '';
+        let modalTasks = [];
+        let todayPlan = null;
+        let planAccepted = false;
+        let generationAttempt = 0;
+
+        // Ingredient amount rules (keyword -> ingredient name + amount per person)
+        const INGREDIENT_RULES = {
+            'rice': { name: 'Rice', amount: '~200g' },
+            'chicken': { name: 'Chicken', amount: '~150g' },
+            'fish': { name: 'Fish', amount: '~150g' },
+            'egg': { name: 'Eggs', amount: '2 pcs' },
+            'lentil': { name: 'Lentils', amount: '~80g' },
+            'dal': { name: 'Lentils (Dal)', amount: '~80g' },
+            'dhal': { name: 'Lentils (Dhal)', amount: '~80g' },
+            'noodle': { name: 'Noodles', amount: '~100g' },
+            'pasta': { name: 'Pasta', amount: '~100g' },
+            'bread': { name: 'Bread', amount: '2 slices' },
+            'toast': { name: 'Bread', amount: '2 slices' },
+            'roti': { name: 'Roti/Flatbread', amount: '2-3 pcs' },
+            'chapati': { name: 'Chapati', amount: '2-3 pcs' },
+            'oat': { name: 'Oats', amount: '~50g' },
+            'yogurt': { name: 'Yogurt', amount: '~150g' },
+            'curd': { name: 'Curd/Yogurt', amount: '~150g' },
+            'milk': { name: 'Milk', amount: '~200ml' },
+            'coconut': { name: 'Coconut', amount: '~50g (grated)' },
+            'potato': { name: 'Potato', amount: '~200g' },
+            'tomato': { name: 'Tomatoes', amount: '~100g' },
+            'onion': { name: 'Onion', amount: '1 medium' },
+            'vegetable': { name: 'Mixed Vegetables', amount: '~200g' },
+            'beef': { name: 'Beef', amount: '~150g' },
+            'pork': { name: 'Pork', amount: '~150g' },
+            'prawn': { name: 'Prawns', amount: '~120g' },
+            'shrimp': { name: 'Shrimp', amount: '~120g' },
+            'tofu': { name: 'Tofu', amount: '~150g' },
+            'paneer': { name: 'Paneer', amount: '~100g' },
+            'cheese': { name: 'Cheese', amount: '~40g' },
+            'banana': { name: 'Banana', amount: '1-2 pcs' },
+            'fruit': { name: 'Fresh Fruits', amount: '~150g' },
+            'apple': { name: 'Apple', amount: '1 pc' },
+            'nut': { name: 'Nuts', amount: '~30g' },
+            'almond': { name: 'Almonds', amount: '~30g' },
+            'peanut': { name: 'Peanuts', amount: '~30g' },
+            'bean': { name: 'Beans', amount: '~100g' },
+            'salmon': { name: 'Salmon', amount: '~150g' },
+            'tuna': { name: 'Tuna', amount: '~120g' },
+            'quinoa': { name: 'Quinoa', amount: '~80g' },
+            'avocado': { name: 'Avocado', amount: '½ pc' },
+            'lettuce': { name: 'Lettuce', amount: '~80g' },
+            'spinach': { name: 'Spinach', amount: '~100g' },
+            'carrot': { name: 'Carrot', amount: '1 medium' },
+            'flour': { name: 'Flour', amount: '~100g' },
+            'semolina': { name: 'Semolina', amount: '~80g' },
+            'soy': { name: 'Soy', amount: '~50g' },
+            'corn': { name: 'Corn', amount: '~100g' },
+            'pepper': { name: 'Pepper', amount: 'to taste' },
+            'garlic': { name: 'Garlic', amount: '2-3 cloves' },
+            'ginger': { name: 'Ginger', amount: '~5g' },
+            'oil': { name: 'Cooking Oil', amount: '~15ml' },
+            'butter': { name: 'Butter', amount: '~10g' },
+            'sugar': { name: 'Sugar', amount: '~10g' },
+            'honey': { name: 'Honey', amount: '~15ml' },
+            'salt': { name: 'Salt', amount: 'to taste' },
+            'curry': { name: 'Curry Spices', amount: '~5g' },
+            'turkey': { name: 'Turkey', amount: '~150g' },
+            'mushroom': { name: 'Mushrooms', amount: '~80g' },
+            'broccoli': { name: 'Broccoli', amount: '~100g' },
+            'cucumber': { name: 'Cucumber', amount: '½ pc' },
+            'cabbage': { name: 'Cabbage', amount: '~100g' }
+        };
+
+        function getTodayLabel() {
+            const d = new Date();
+            return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isLoggedIn()) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            routines = getFromStorage(STORAGE_KEYS.ROUTINES) || { weekday: [], weekend: [], special: [] };
+            ingredients = getFromStorage(STORAGE_KEYS.INGREDIENTS) || [];
+
+            renderRoutines();
+            renderIngredients();
+
+            // Restore saved today plan if exists
+            const savedPlan = getFromStorage('biteburn_mealplan_' + getTodayKey());
+            if (savedPlan && savedPlan._accepted) {
+                todayPlan = savedPlan;
+                planAccepted = true;
+                renderTodayPlan();
+            }
+        });
+
+        function renderRoutines() {
+            ['weekday', 'weekend', 'special'].forEach(type => {
+                const tasks = routines[type] || [];
+                const container = document.getElementById(`${type}Tasks`);
+                const countEl = document.getElementById(`${type}Count`);
+
+                countEl.textContent = `${tasks.length} task${tasks.length !== 1 ? 's' : ''}`;
+
+                if (tasks.length === 0) {
+                    container.innerHTML = '<div class="empty-slot">No tasks yet</div>';
+                } else {
+                    container.innerHTML = tasks.slice(0, 5).map(task => `
+            <div class="mini-task">
+              <span class="mini-task-icon">📌</span>
+              <span>${task.title}</span>
+              ${task.time ? `<span class="text-muted" style="margin-left: auto;">⏰ ${task.time}</span>` : ''}
+            </div>
+          `).join('') + (tasks.length > 5 ? `<div class="text-muted text-center" style="font-size: 0.75rem;">+${tasks.length - 5} more</div>` : '');
+                }
+            });
+        }
+
+        function renderIngredients() {
+            const container = document.getElementById('ingredientsList');
+
+            if (ingredients.length === 0) {
+                container.innerHTML = '<p class="text-muted">No ingredients added yet</p>';
+            } else {
+                container.innerHTML = ingredients.map((ing, i) => `
+          <div class="ingredient-tag">
+            <span>${ing}</span>
+            <button class="ingredient-remove" onclick="removeIngredient(${i})">×</button>
+          </div>
+        `).join('');
+            }
+        }
+
+        function addIngredient() {
+            const input = document.getElementById('newIngredient');
+            const value = input.value.trim();
+
+            if (!value) return;
+            if (ingredients.includes(value.toLowerCase())) {
+                showToast('Ingredient already added', 'info');
+                return;
+            }
+
+            ingredients.push(value.toLowerCase());
+            saveData(STORAGE_KEYS.INGREDIENTS, ingredients);
+            input.value = '';
+            renderIngredients();
+            showToast('Ingredient added!', 'success');
+        }
+
+        function removeIngredient(index) {
+            ingredients.splice(index, 1);
+            saveData(STORAGE_KEYS.INGREDIENTS, ingredients);
+            renderIngredients();
+        }
+
+        // ---- Tomorrow's Meal Plan ----
+
+        function scoreMeal(meal, userIngredients) {
+            const text = (meal.name + ' ' + meal.desc).toLowerCase();
+            let score = 0;
+            userIngredients.forEach(ing => {
+                if (text.includes(ing)) score++;
+            });
+            return score;
+        }
+
+        function getIngredientAmounts(meal) {
+            const text = (meal.name + ' ' + meal.desc).toLowerCase();
+            const amounts = [];
+            const seen = new Set();
+
+            for (const [keyword, info] of Object.entries(INGREDIENT_RULES)) {
+                if (text.includes(keyword) && !seen.has(info.name)) {
+                    seen.add(info.name);
+                    amounts.push({ name: info.name, amount: info.amount });
+                }
+            }
+
+            // If nothing matched, add generic amounts based on calories
+            if (amounts.length === 0) {
+                if (meal.calories > 400) {
+                    amounts.push({ name: 'Main ingredient', amount: '~200g' });
+                    amounts.push({ name: 'Side ingredients', amount: '~100g' });
+                } else {
+                    amounts.push({ name: 'Main ingredient', amount: '~150g' });
+                }
+                amounts.push({ name: 'Seasoning', amount: 'to taste' });
+            }
+
+            return amounts;
+        }
+
+        function pickBestMeal(mealList, userIngredients, exclude = []) {
+            const excludeNames = exclude.map(m => m.name);
+            let available = mealList.filter(m => !excludeNames.includes(m.name));
+            if (available.length === 0) available = mealList;
+
+            // Score and sort
+            const scored = available.map(m => ({ meal: m, score: scoreMeal(m, userIngredients) }));
+            scored.sort((a, b) => b.score - a.score);
+
+            // Pick from top matches with some randomness
+            const topScore = scored[0].score;
+            const topMeals = scored.filter(s => s.score === topScore);
+            const pick = topMeals[Math.floor(Math.random() * topMeals.length)];
+
+            return { ...pick.meal, _matchScore: pick.score };
+        }
+
+        function generateTodayPlan() {
+            if (ingredients.length === 0) {
+                showToast('Add some ingredients first to generate a meal plan!', 'info');
+                return;
+            }
+
+            const user = getCurrentUser();
+            const meals = getMealsForCountry(user.country);
+
+            // Filter by diet
+            const filterByDiet = (list) => {
+                let filtered = [...list];
+                if (user.dietType === 'vegetarian') {
+                    filtered = filtered.filter(m =>
+                        !m.name.toLowerCase().includes('chicken') &&
+                        !m.name.toLowerCase().includes('fish') &&
+                        !m.name.toLowerCase().includes('meat') &&
+                        !m.name.toLowerCase().includes('beef') &&
+                        !m.name.toLowerCase().includes('pork')
+                    );
+                }
+                if (user.allergies) {
+                    const allergyList = user.allergies.toLowerCase().split(',').map(a => a.trim());
+                    filtered = filtered.filter(m =>
+                        !allergyList.some(a => m.name.toLowerCase().includes(a) || m.desc.toLowerCase().includes(a))
+                    );
+                }
+                return filtered.length > 0 ? filtered : list;
+            };
+
+            generationAttempt++;
+
+            const breakfast = pickBestMeal(filterByDiet(meals.breakfast), ingredients);
+            const lunch = pickBestMeal(filterByDiet(meals.lunch), ingredients, [breakfast]);
+            const dinner = pickBestMeal(filterByDiet(meals.dinner), ingredients, [breakfast, lunch]);
+
+            // For snacks pick 2
+            const snack1 = pickBestMeal(filterByDiet(meals.snacks), ingredients);
+            const snack2 = pickBestMeal(filterByDiet(meals.snacks), ingredients, [snack1]);
+
+            todayPlan = {
+                breakfast: [{ ...breakfast, eaten: false, ingredients: getIngredientAmounts(breakfast) }],
+                lunch: [{ ...lunch, eaten: false, ingredients: getIngredientAmounts(lunch) }],
+                dinner: [{ ...dinner, eaten: false, ingredients: getIngredientAmounts(dinner) }],
+                snacks: [
+                    { ...snack1, eaten: false, ingredients: getIngredientAmounts(snack1) },
+                    { ...snack2, eaten: false, ingredients: getIngredientAmounts(snack2) }
+                ]
+            };
+
+            planAccepted = false;
+            renderTodayPlan();
+            showToast('Today\'s meal plan generated!', 'success');
+        }
+
+        function renderTodayPlan() {
+            const area = document.getElementById('todayPlanArea');
+            if (!todayPlan) { area.innerHTML = ''; return; }
+
+            const user = getCurrentUser();
+            const countryCode = user.country || 'US';
+            const countryDetails = getCountryDetails(countryCode);
+            let totalCost = 0;
+
+            const mealTypes = [
+                { key: 'breakfast', icon: '🌅', title: 'Breakfast' },
+                { key: 'lunch', icon: '☀️', title: 'Lunch' },
+                { key: 'dinner', icon: '🌙', title: 'Dinner' },
+                { key: 'snacks', icon: '🥗', title: 'Snacks' }
+            ];
+
+            // Calculate totals
+            const totalCal = Object.values(todayPlan).flat().reduce((s, m) => s + (m.calories || 0), 0);
+            const totalPro = Object.values(todayPlan).flat().reduce((s, m) => s + (m.protein || 0), 0);
+            const totalCarbs = Object.values(todayPlan).flat().reduce((s, m) => s + (m.carbs || 0), 0);
+
+            // Calculate total cost
+            Object.values(todayPlan).flat().forEach(m => {
+                totalCost += parseFloat(estimateMealPrice(m.calories, countryCode));
+            });
+
+            const statusBadge = planAccepted
+                ? '<span class="plan-status accepted">✓ Accepted</span>'
+                : '<span class="plan-status pending">⏳ Pending Review</span>';
+
+            let html = `
+            <div class="today-plan">
+                <div class="plan-header">
+                    <div>
+                        <h2>🗓️ Today's Meal Plan</h2>
+                        <p class="text-muted" style="font-size:0.85rem;">
+                            ${getTodayLabel()} · Total: ${totalCal} cal · ${totalPro}g protein · ${totalCarbs}g carbs
+                            <br>
+                            <span style="color: var(--primary); font-weight: 600;">
+                                Approx. Cost: ${countryDetails.currencySymbol} ${totalCost.toLocaleString()}
+                            </span>
+                        </p>
+                    </div>
+                    ${statusBadge}
+                </div>
+
+                <div class="plan-meals-grid">`;
+
+            mealTypes.forEach(type => {
+                const meals = todayPlan[type.key] || [];
+                meals.forEach(meal => {
+                    const price = estimateMealPrice(meal.calories, countryCode);
+                    const matchLabel = meal._matchScore > 0
+                        ? `<span class="match-badge">✓ ${meal._matchScore} ingredient${meal._matchScore > 1 ? 's' : ''} match</span>`
+                        : '';
+
+                    const ingredientRows = (meal.ingredients || []).map(ing =>
+                        `<div class="plan-ing-item"><span>${ing.name}</span><span class="plan-ing-amount">${ing.amount}</span></div>`
+                    ).join('');
+
+                    html += `
+                    <div class="plan-meal-card">
+                        <div class="plan-meal-type">
+                            <span class="type-icon">${type.icon}</span>
+                            ${type.title} ${matchLabel}
+                            <span style="margin-left:auto; font-size:0.8rem; color:var(--primary); font-weight:600;">
+                                ${countryDetails.currencySymbol} ${price}
+                            </span>
+                        </div>
+                        <div class="plan-meal-name">${meal.name}</div>
+                        <div class="plan-meal-desc">${meal.desc}</div>
+                        <div class="plan-nutrition-row">
+                            <span class="plan-nut-tag cal">${meal.calories} cal</span>
+                            <span class="plan-nut-tag pro">${meal.protein}g pro</span>
+                            <span class="plan-nut-tag carb">${meal.carbs}g carb</span>
+                            ${meal.prepTime ? `<span class="plan-nut-tag" style="color:var(--gray-400)">⏱️ ${meal.prepTime}m</span>` : ''}
+                        </div>
+                        <div class="plan-ingredients-label">🧾 Approx. per person</div>
+                        <div class="plan-ingredients-list">${ingredientRows}</div>
+                    </div>`;
+                });
+            });
+
+            html += '</div>';
+
+            if (!planAccepted) {
+                html += `
+                <div class="plan-actions">
+                    <button class="plan-action-btn plan-accept-btn" onclick="acceptTodayPlan()">✅ Accept Plan</button>
+                    <button class="plan-action-btn plan-reject-btn" onclick="rejectTodayPlan()">🔄 Try Another</button>
+                    <button class="plan-action-btn plan-custom-btn" onclick="showCustomMealForm()">✏️ Add Custom Meal</button>
+                </div>
+                <div id="customMealFormArea"></div>`;
+            }
+
+            html += '</div>';
+            area.innerHTML = html;
+            area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function acceptTodayPlan() {
+            planAccepted = true;
+            todayPlan._accepted = true;
+            saveData('biteburn_mealplan_' + getTodayKey(), todayPlan);
+            renderTodayPlan();
+            showToast('Today\'s meal plan accepted! 🎉', 'success');
+            unlockAchievement('meal_planner', 'Meal Planner', 'Planned a meal for today', '📋');
+        }
+
+        function rejectTodayPlan() {
+            localStorage.removeItem('biteburn_mealplan_' + getTodayKey());
+            generateTodayPlan();
+            showToast('Here\'s a different plan!', 'info');
+        }
+
+        function showCustomMealForm() {
+            const area = document.getElementById('customMealFormArea');
+            if (!area) return;
+
+            area.innerHTML = `
+            <div class="custom-meal-form">
+                <h4>✏️ Add a Custom Meal</h4>
+                <div class="custom-form-grid">
+                    <div>
+                        <label class="form-label">Meal Slot</label>
+                        <select class="custom-meal-type-select" id="customMealType">
+                            <option value="breakfast">🌅 Breakfast</option>
+                            <option value="lunch">☀️ Lunch</option>
+                            <option value="dinner">🌙 Dinner</option>
+                            <option value="snacks">🍎 Snack</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Estimated Calories</label>
+                        <input type="number" class="form-input" id="customMealCal" placeholder="e.g. 400" value="400">
+                    </div>
+                    <div class="full-width">
+                        <label class="form-label">Meal Name</label>
+                        <input type="text" class="form-input" id="customMealName" placeholder="e.g. Homemade Chicken Fried Rice">
+                    </div>
+                    <div class="full-width">
+                        <label class="form-label">Description / Notes</label>
+                        <input type="text" class="form-input" id="customMealDesc" placeholder="e.g. With vegetables and egg">
+                    </div>
+                </div>
+                <div class="custom-form-actions">
+                    <button class="plan-action-btn plan-accept-btn" style="flex:1" onclick="addCustomMeal()">➕ Add to Plan</button>
+                    <button class="plan-action-btn plan-reject-btn" onclick="document.getElementById('customMealFormArea').innerHTML=''">Cancel</button>
+                </div>
+            </div>`;
+
+            area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function addCustomMeal() {
+            const type = document.getElementById('customMealType').value;
+            const name = document.getElementById('customMealName').value.trim();
+            const desc = document.getElementById('customMealDesc').value.trim();
+            const cal = parseInt(document.getElementById('customMealCal').value) || 400;
+
+            if (!name) {
+                showToast('Please enter a meal name', 'error');
+                return;
+            }
+
+            if (!todayPlan) {
+                todayPlan = { breakfast: [], lunch: [], dinner: [], snacks: [] };
+            }
+
+            const customMeal = {
+                name: name,
+                desc: desc || 'Custom meal',
+                calories: cal,
+                protein: Math.round(cal * 0.15 / 4),
+                carbs: Math.round(cal * 0.5 / 4),
+                prepTime: null,
+                eaten: false,
+                _matchScore: 0,
+                _custom: true,
+                ingredients: getIngredientAmounts({ name, desc: desc || '' })
+            };
+
+            // Replace the slot with the custom meal
+            todayPlan[type] = [customMeal];
+
+            document.getElementById('customMealFormArea').innerHTML = '';
+            renderTodayPlan();
+            showToast(`Custom ${type} added to plan!`, 'success');
+        }
+
+        // Modal functions
+        function openTaskModal(type) {
+            currentRoutineType = type;
+            modalTasks = [];
+
+            const titles = { weekday: 'Weekday', weekend: 'Weekend', special: 'Special Days' };
+            document.getElementById('modalTitle').textContent = `Add ${titles[type]} Tasks`;
+
+            addTaskToModal();
+            document.getElementById('taskModal').classList.add('active');
+        }
+
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.remove('active');
+        }
+
+        function addTaskToModal() {
+            const container = document.getElementById('modalTaskList');
+            const index = container.children.length;
+
+            const taskEl = document.createElement('div');
+            taskEl.className = 'modal-task-item';
+            taskEl.innerHTML = `
+        <input type="text" placeholder="Task name" class="task-input">
+        <input type="time" class="time-input">
+        <button class="remove-task-btn" onclick="this.parentElement.remove()">🗑️</button>
+      `;
+            container.appendChild(taskEl);
+            taskEl.querySelector('input').focus();
+        }
+
+        function saveModalTasks() {
+            const container = document.getElementById('modalTaskList');
+            const taskItems = container.querySelectorAll('.modal-task-item');
+
+            taskItems.forEach(item => {
+                const title = item.querySelector('.task-input').value.trim();
+                const time = item.querySelector('.time-input').value;
+
+                if (title) {
+                    if (!routines[currentRoutineType]) {
+                        routines[currentRoutineType] = [];
+                    }
+
+                    routines[currentRoutineType].push({
+                        id: generateId(),
+                        title,
+                        time,
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+            });
+
+            saveData(STORAGE_KEYS.ROUTINES, routines);
+            closeTaskModal();
+            renderRoutines();
+            showToast('Tasks saved!', 'success');
+
+            const totalTasks = Object.values(routines).flat().length;
+            if (totalTasks >= 10) {
+                unlockAchievement('planner', 'Master Planner', 'Created 10+ daily tasks', '📋');
+            }
+        }
+
+        function openCustomRoutineModal() {
+            window.location.href = 'daily-routine.html';
+        }
+
+        // Enter key to add ingredient
+        document.getElementById('newIngredient').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addIngredient();
+        });
+    </script>
+</body>
+
+</html>

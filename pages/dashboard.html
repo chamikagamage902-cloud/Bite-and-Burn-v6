@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Your Bite & Burn Dashboard - Track your health meters, access quick shortcuts, and monitor your progress.">
+  <title>Dashboard - Bite & Burn</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <link rel="stylesheet" href="../styles/animations.css">
+  <style>
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 100px auto 40px;
+      padding: 0 24px;
+    }
+
+    /* Greeting Section */
+    .dash-greeting {
+      margin-bottom: 40px;
+    }
+
+    .dash-greeting h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin-bottom: 8px;
+    }
+
+    .dash-greeting h1 .wave {
+      display: inline-block;
+      animation: wave 2s ease-in-out infinite;
+      transform-origin: 70% 70%;
+    }
+
+    .dash-greeting .dash-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .dash-summary-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--gray-800);
+      border: 1px solid var(--gray-700);
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      color: var(--gray-300);
+      animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      opacity: 0;
+    }
+
+    .dash-summary-chip:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .dash-summary-chip:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .dash-summary-chip:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .dash-summary-chip .chip-value {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Section Title */
+    .dash-section-title {
+      font-size: 1.25rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--white);
+    }
+
+    .dash-section-title .title-line {
+      flex: 1;
+      height: 1px;
+      background: var(--gray-700);
+    }
+
+    /* Health Meters Grid */
+    .health-meters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    .meter-card {
+      background: var(--gray-800);
+      border: 1px solid var(--gray-700);
+      border-radius: var(--radius-xl);
+      padding: 28px 20px;
+      text-align: center;
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+      animation: staggerFadeIn 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .meter-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .meter-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .meter-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .meter-card:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .meter-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+
+    .meter-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(34, 197, 94, 0.15);
+    }
+
+    .meter-card:hover::before {
+      opacity: 1;
+    }
+
+    .meter-ring-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 16px;
+    }
+
+    .meter-ring-container svg {
+      transform: rotate(-90deg);
+      width: 140px;
+      height: 140px;
+    }
+
+    .meter-ring-bg {
+      fill: none;
+      stroke: var(--gray-700);
+      stroke-width: 10;
+    }
+
+    .meter-ring-fill {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .meter-ring-fill.bmi {
+      stroke: url(#bmiGradient);
+    }
+
+    .meter-ring-fill.calories {
+      stroke: url(#caloriesGradient);
+    }
+
+    .meter-ring-fill.water {
+      stroke: url(#waterGradient);
+    }
+
+    .meter-ring-fill.activity {
+      stroke: url(#activityGradient);
+    }
+
+    .meter-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .meter-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      font-family: var(--font-display);
+      color: var(--white);
+    }
+
+    .meter-unit {
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      margin-top: -2px;
+    }
+
+    .meter-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-300);
+    }
+
+    .meter-sublabel {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* Quick Shortcuts Grid */
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .shortcut-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 32px 20px;
+      background: var(--gray-800);
+      border: 1px solid var(--gray-700);
+      border-radius: var(--radius-xl);
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--gray-100);
+      transition: all var(--transition-normal);
+      overflow: hidden;
+      animation: staggerFadeIn 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .shortcut-card:nth-child(1) {
+      animation-delay: 0.15s;
+    }
+
+    .shortcut-card:nth-child(2) {
+      animation-delay: 0.25s;
+    }
+
+    .shortcut-card:nth-child(3) {
+      animation-delay: 0.35s;
+    }
+
+    .shortcut-card:nth-child(4) {
+      animation-delay: 0.45s;
+    }
+
+    .shortcut-card:nth-child(5) {
+      animation-delay: 0.55s;
+    }
+
+    .shortcut-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(34, 197, 94, 0.12) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .shortcut-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 16px 48px rgba(34, 197, 94, 0.2), 0 0 30px rgba(34, 197, 94, 0.08);
+      color: var(--white);
+    }
+
+    .shortcut-card:hover::before {
+      opacity: 1;
+    }
+
+    .shortcut-card:hover .shortcut-icon {
+      animation: iconSpin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transform: scale(1.15);
+    }
+
+    .shortcut-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--gradient-primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.25);
+      transition: transform 0.3s ease;
+      z-index: 1;
+    }
+
+    .shortcut-label {
+      font-weight: 600;
+      font-size: 1rem;
+      z-index: 1;
+    }
+
+    .shortcut-desc {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      text-align: center;
+      z-index: 1;
+    }
+
+    /* Ripple Effect */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.35);
+      transform: scale(0);
+      animation: rippleClick 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    /* Clicked animation class */
+    .shortcut-card.clicked {
+      animation: cardBounce 0.4s ease;
+    }
+
+    /* Water intake buttons */
+    .water-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .water-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--gray-600);
+      background: var(--gray-700);
+      color: var(--white);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .water-btn:hover {
+      border-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.2);
+      transform: scale(1.1);
+    }
+
+    .water-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Calorie eaten sublabel */
+    .meter-eaten-info {
+      font-size: 0.7rem;
+      color: var(--gray-400);
+      margin-top: 2px;
+    }
+
+    /* Edit Profile Section */
+    .edit-profile-section {
+      display: none;
+      margin-bottom: 48px;
+      animation: fadeInUp 0.4s ease;
+    }
+
+    .edit-profile-section.active {
+      display: block;
+    }
+
+    .profile-form-card {
+      background: var(--gray-800);
+      border: 1px solid var(--gray-700);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+    }
+
+    .profile-form-card h2 {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .profile-form-grid .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .profile-form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .profile-form-actions .btn {
+      flex: 1;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        margin-top: 80px;
+        padding: 0 16px;
+      }
+
+      .health-meters-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .meter-ring-container {
+        width: 110px;
+        height: 110px;
+      }
+
+      .meter-ring-container svg {
+        width: 110px;
+        height: 110px;
+      }
+
+      .meter-value {
+        font-size: 1.35rem;
+      }
+
+      .shortcuts-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .shortcut-card {
+        padding: 24px 14px;
+      }
+
+      .shortcut-icon {
+        width: 52px;
+        height: 52px;
+        font-size: 1.4rem;
+        border-radius: 16px;
+      }
+
+      .profile-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .health-meters-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .shortcuts-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <a href="../index.html" class="logo">
+            <div class="logo-icon">
+              <img src="../assets/logo.png" alt="Bite & Burn Logo"
+                style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <span>Bite & Burn</span>
+          </a>
+        </div>
+
+
+        <nav>
+          <ul class="nav-links" id="navLinks">
+            <li><a href="food-planning.html">Food Planning</a></li>
+            <li><a href="workout.html">Workout</a></li>
+            <li><a href="daily-routine.html">Daily Routine</a></li>
+            <li><a href="analyzing.html">Analyzing</a></li>
+            <li><a href="achievements.html">Achievements</a></li>
+          </ul>
+        </nav>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="auth-buttons"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SVG Gradient Definitions -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <linearGradient id="bmiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#22c55e" />
+        <stop offset="100%" style="stop-color:#10b981" />
+      </linearGradient>
+      <linearGradient id="caloriesGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#f59e0b" />
+        <stop offset="100%" style="stop-color:#ef4444" />
+      </linearGradient>
+      <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#3b82f6" />
+        <stop offset="100%" style="stop-color:#06b6d4" />
+      </linearGradient>
+      <linearGradient id="activityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#a855f7" />
+        <stop offset="100%" style="stop-color:#ec4899" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="dashboard-container">
+    <!-- Greeting -->
+    <div class="dash-greeting fade-in-up">
+      <h1><span class="wave">👋</span> <span id="greetingText">Good Morning</span>, <span id="userName">User</span>!
+      </h1>
+      <p class="text-muted">Here's your health overview for today.</p>
+      <div class="dash-summary" id="dashSummary">
+        <!-- Chips populated by JS -->
+      </div>
+    </div>
+
+    <!-- Health Meters -->
+    <div class="dash-section-title">
+      <span>💚 Health Meters</span>
+      <span class="title-line"></span>
+    </div>
+    <div class="health-meters-grid" id="healthMeters">
+      <!-- BMI Meter -->
+      <div class="meter-card">
+        <div class="meter-ring-container">
+          <svg viewBox="0 0 140 140">
+            <circle class="meter-ring-bg" cx="70" cy="70" r="58" />
+            <circle class="meter-ring-fill bmi" cx="70" cy="70" r="58" id="bmiRing" stroke-dasharray="364.42"
+              stroke-dashoffset="364.42" />
+          </svg>
+          <div class="meter-center">
+            <span class="meter-value" id="bmiValue">--</span>
+            <span class="meter-unit">BMI</span>
+          </div>
+        </div>
+        <div class="meter-label">Body Mass Index</div>
+        <div class="meter-sublabel" id="bmiCategory">--</div>
+      </div>
+
+      <!-- Calories Meter (Eaten vs Target) -->
+      <div class="meter-card">
+        <div class="meter-ring-container">
+          <svg viewBox="0 0 140 140">
+            <circle class="meter-ring-bg" cx="70" cy="70" r="58" />
+            <circle class="meter-ring-fill calories" cx="70" cy="70" r="58" id="caloriesRing" stroke-dasharray="364.42"
+              stroke-dashoffset="364.42" />
+          </svg>
+          <div class="meter-center">
+            <span class="meter-value" id="caloriesValue">0</span>
+            <span class="meter-unit" id="caloriesPercUnit">% eaten</span>
+          </div>
+        </div>
+        <div class="meter-label">Calories Eaten</div>
+        <div class="meter-sublabel" id="caloriesTarget">0 / 0 kcal</div>
+      </div>
+
+      <!-- Water Meter (with +/- controls) -->
+      <div class="meter-card">
+        <div class="meter-ring-container">
+          <svg viewBox="0 0 140 140">
+            <circle class="meter-ring-bg" cx="70" cy="70" r="58" />
+            <circle class="meter-ring-fill water" cx="70" cy="70" r="58" id="waterRing" stroke-dasharray="364.42"
+              stroke-dashoffset="364.42" />
+          </svg>
+          <div class="meter-center">
+            <span class="meter-value" id="waterValue">0</span>
+            <span class="meter-unit">/ 8 glasses</span>
+          </div>
+        </div>
+        <div class="meter-label">Water Intake</div>
+        <div class="water-controls">
+          <button class="water-btn" onclick="changeWater(-1)" title="Remove glass">−</button>
+          <span class="meter-sublabel">💧 Tap to track</span>
+          <button class="water-btn" onclick="changeWater(1)" title="Add glass">+</button>
+        </div>
+      </div>
+
+      <!-- Activity Meter -->
+      <div class="meter-card">
+        <div class="meter-ring-container">
+          <svg viewBox="0 0 140 140">
+            <circle class="meter-ring-bg" cx="70" cy="70" r="58" />
+            <circle class="meter-ring-fill activity" cx="70" cy="70" r="58" id="activityRing" stroke-dasharray="364.42"
+              stroke-dashoffset="364.42" />
+          </svg>
+          <div class="meter-center">
+            <span class="meter-value" id="activityValue">0</span>
+            <span class="meter-unit">% done</span>
+          </div>
+        </div>
+        <div class="meter-label">Daily Activity</div>
+        <div class="meter-sublabel" id="activityLabel">Keep moving! 🏃</div>
+      </div>
+    </div>
+
+
+
+    <!-- Quick Shortcuts -->
+    <div class="dash-section-title">
+      <span>⚡ Quick Shortcuts</span>
+      <span class="title-line"></span>
+    </div>
+    <div class="shortcuts-grid" id="shortcutsGrid">
+
+      <a href="daily-routine.html" class="shortcut-card" onclick="animateCard(event, this)">
+        <div class="shortcut-icon">📅</div>
+        <div class="shortcut-label">Daily Routine</div>
+        <div class="shortcut-desc">Plan & track your day</div>
+      </a>
+      <a href="food-planning.html" class="shortcut-card" onclick="animateCard(event, this)">
+        <div class="shortcut-icon">🍽️</div>
+        <div class="shortcut-label">Food Planning</div>
+        <div class="shortcut-desc">Smart meal plans</div>
+      </a>
+      <a href="analyzing.html" class="shortcut-card" onclick="animateCard(event, this)">
+        <div class="shortcut-icon">📊</div>
+        <div class="shortcut-label">Analyzing</div>
+        <div class="shortcut-desc">Health insights & reports</div>
+      </a>
+      <a href="workout.html" class="shortcut-card" onclick="animateCard(event, this)">
+        <div class="shortcut-icon">🏋️</div>
+        <div class="shortcut-label">Workout</div>
+        <div class="shortcut-desc">Personalized exercises</div>
+      </a>
+      <a href="achievements.html" class="shortcut-card" onclick="animateCard(event, this)">
+        <div class="shortcut-icon">🏆</div>
+        <div class="shortcut-label">Achievements</div>
+        <div class="shortcut-desc">Badges & milestones</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-copyright">
+          © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+        </div>
+        <div class="footer-contact">
+          Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chat Toggle Button -->
+  <button class="chat-toggle" id="chatToggle" aria-label="Open chat">💬</button>
+
+  <!-- Chat Popup -->
+  <div class="chat-popup" id="chatPopup">
+    <div class="chat-header">
+      <span>Bite & Burn Assistant</span>
+      <button class="modal-close" id="chatClose">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-message bot">
+        👋 Hi! I'm your Bite & Burn assistant. How can I help you today?
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" class="form-input" placeholder="Type a message..." id="chatInput">
+      <button class="btn btn-primary btn-icon" id="chatSend">➤</button>
+    </div>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/components.js"></script>
+  <script>
+    // CIRCUMFERENCE of the ring: 2 * PI * 58 = 364.42
+    const CIRCUMFERENCE = 364.42;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!requireAuth()) return;
+
+      initDashboard();
+    });
+
+    function initDashboard() {
+      const user = getCurrentUser();
+
+      // --- Greeting ---
+      document.getElementById('greetingText').textContent = getGreeting();
+      document.getElementById('userName').textContent = user.name || 'User';
+
+      // --- Calculate Health Data ---
+      const weight = parseFloat(user.weight) || 70;
+      const height = parseFloat(user.height) || 170;
+      const age = parseInt(user.age) || 25;
+      const gender = user.gender || 'male';
+
+      const bmi = calculateBMI(weight, height);
+      const bmiInfo = getBMICategory(bmi);
+
+      const activityMap = { beginner: 'sedentary', moderate: 'light', active: 'moderate', very_active: 'active' };
+      const actLevel = activityMap[user.activityLevel] || 'moderate';
+      const dailyCal = calculateCalories(weight, height, age, gender, actLevel);
+
+      // --- Summary Chips ---
+      const summaryEl = document.getElementById('dashSummary');
+      summaryEl.innerHTML = `
+        <div class="dash-summary-chip">
+          🎯 Goal: <span class="chip-value">${formatGoal(user.goal)}</span>
+        </div>
+        <div class="dash-summary-chip">
+          ⚖️ BMI: <span class="chip-value" style="color:${bmiInfo.color}">${bmi} (${bmiInfo.category})</span>
+        </div>
+        <div class="dash-summary-chip">
+          🔥 Daily Target: <span class="chip-value">${dailyCal} kcal</span>
+        </div>
+      `;
+
+      // --- Animate Health Meters ---
+
+      // 1. BMI (scale 15-40 → 0-100%)
+      const bmiPercent = Math.min(100, Math.max(0, ((bmi - 15) / 25) * 100));
+      animateMeter('bmiRing', bmiPercent);
+      animateValue('bmiValue', 0, parseFloat(bmi), 1200, 1);
+      document.getElementById('bmiCategory').textContent = bmiInfo.category;
+      document.getElementById('bmiCategory').style.color = bmiInfo.color;
+
+      // 2. Calories EATEN vs TARGET (real data from food planning)
+      const todayEaten = getTodayEaten();
+      const eatenCal = todayEaten.calories || 0;
+      const calPercent = dailyCal > 0 ? Math.min(100, Math.round((eatenCal / dailyCal) * 100)) : 0;
+      animateMeter('caloriesRing', calPercent);
+      animateValue('caloriesValue', 0, calPercent, 1400, 0);
+      document.getElementById('caloriesTarget').textContent = `${eatenCal} / ${dailyCal} kcal`;
+
+      // 3. Water intake (real data from localStorage)
+      const waterGlasses = getTodayWater();
+      const waterPercent = Math.min(100, (waterGlasses / 8) * 100);
+      animateMeter('waterRing', waterPercent);
+      document.getElementById('waterValue').textContent = waterGlasses;
+
+      // 4. Activity (real data from routines/workouts)
+      const activityPercent = getTodayActivity();
+      animateMeter('activityRing', activityPercent);
+      animateValue('activityValue', 0, activityPercent, 1200, 0);
+      if (activityPercent >= 100) {
+        document.getElementById('activityLabel').textContent = 'All done! 🎉';
+      } else if (activityPercent > 0) {
+        document.getElementById('activityLabel').textContent = 'Keep going! 🏃';
+      } else {
+        document.getElementById('activityLabel').textContent = 'Start your day! 💪';
+      }
+
+    }
+
+    // --- Water Intake Controls ---
+    function changeWater(delta) {
+      let current = getTodayWater();
+      current = Math.max(0, Math.min(12, current + delta));
+      saveTodayWater(current);
+
+      // Update meter immediately
+      const waterPercent = Math.min(100, (current / 8) * 100);
+      animateMeter('waterRing', waterPercent);
+      document.getElementById('waterValue').textContent = current;
+
+      if (current >= 8) {
+        showToast('Great job! You hit your water goal! 💧', 'success');
+      }
+    }
+
+
+
+    // Animate SVG ring meter
+    function animateMeter(ringId, percent) {
+      const ring = document.getElementById(ringId);
+      if (!ring) return;
+      const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE;
+      setTimeout(() => {
+        ring.style.strokeDashoffset = offset;
+      }, 300);
+    }
+
+    // Animate a counter from start to end
+    function animateValue(elementId, start, end, duration, decimals) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const range = end - start;
+      const startTime = performance.now();
+
+      function step(timestamp) {
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + range * eased;
+        el.textContent = current.toFixed(decimals);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = end.toFixed(decimals);
+        }
+      }
+
+      setTimeout(() => requestAnimationFrame(step), 400);
+    }
+
+    // Format goal value
+    function formatGoal(goal) {
+      const goals = {
+        lose_weight: 'Lose Weight',
+        gain_muscle: 'Gain Muscle',
+        stay_fit: 'Stay Fit',
+        improve_strength: 'Improve Strength',
+        improve_stamina: 'Improve Stamina'
+      };
+      return goals[goal] || 'Stay Healthy';
+    }
+
+    // Shortcut card click animation with ripple
+    function animateCard(event, card) {
+      event.preventDefault();
+
+      const ripple = document.createElement('span');
+      ripple.classList.add('ripple');
+      const rect = card.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 2;
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (event.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (event.clientY - rect.top - size / 2) + 'px';
+      card.appendChild(ripple);
+
+      card.classList.add('clicked');
+
+      const href = card.getAttribute('href');
+      setTimeout(() => {
+        ripple.remove();
+        card.classList.remove('clicked');
+        if (href) window.location.href = href;
+      }, 500);
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Personalized meal planning at Bite & Burn">
+    <title>Food Planning - Bite & Burn</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+        })();
+    </script>
+    <style>
+        :root {
+            --primary: #f97316;
+            --primary-dark: #ea580c;
+            --primary-light: #fb923c;
+            --primary-glow: rgba(249, 115, 22, 0.3);
+            --gradient-primary: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .food-page {
+            padding: 100px 0 40px;
+            min-height: 100vh;
+        }
+
+        .food-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .country-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+        }
+
+        .food-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .food-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Nutrition Sidebar */
+        .nutrition-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .nutrition-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+        }
+
+        .nutrition-circles {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nutrition-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mini-circle {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        .mini-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .mini-circle .bg {
+            fill: none;
+            stroke: var(--gray-700);
+            stroke-width: 6;
+        }
+
+        .mini-circle .progress {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .mini-circle .calories {
+            stroke: #f97316;
+        }
+
+        .mini-circle .protein {
+            stroke: #3b82f6;
+        }
+
+        .mini-circle .carbs {
+            stroke: #22c55e;
+        }
+
+        .mini-circle-value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .nutrition-label {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        .nutrition-value {
+            font-weight: 600;
+        }
+
+        /* Medicine Reminder */
+        .medicine-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border: 1px solid var(--info);
+        }
+
+        .medicine-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .medicine-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Health Tips */
+        .tips-card {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.05) 100%);
+            border: 1px solid #22c55e;
+        }
+
+        .tip-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            color: var(--gray-300);
+        }
+
+        /* Meal Plans */
+        .meals-area {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .meal-section {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .meal-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .meal-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .meal-time {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        .meal-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .meal-item {
+            background: var(--gray-700);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .meal-item:hover {
+            background: var(--gray-600);
+        }
+
+        .meal-item.eaten {
+            opacity: 0.5;
+        }
+
+        .meal-item.eaten .meal-name {
+            text-decoration: line-through;
+        }
+
+        .meal-info {
+            flex: 1;
+        }
+
+        .meal-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .meal-desc {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        .meal-nutrition {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .nutrition-tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nutrition-tag.calories {
+            color: #f97316;
+        }
+
+        .nutrition-tag.protein {
+            color: #3b82f6;
+        }
+
+        .nutrition-tag.carbs {
+            color: #22c55e;
+        }
+
+        .eat-btn {
+            padding: 8px 16px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .eat-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .eat-btn:disabled {
+            background: var(--gray-600);
+            cursor: default;
+            transform: none;
+        }
+
+        .eaten-badge {
+            color: #22c55e;
+            font-weight: 500;
+        }
+
+        /* Generate button */
+        .generate-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        /* Water Intake Tracker */
+        .water-tracker-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border: 1px solid #3b82f6;
+        }
+
+        .water-glasses-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .water-glass {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            border: 2px solid var(--gray-600);
+            background: var(--gray-700);
+            cursor: pointer;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .water-glass:hover {
+            border-color: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        .water-glass.filled {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+
+        .water-glass.filled::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.3), rgba(6, 182, 212, 0.5));
+        }
+
+        .water-progress-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--gray-400);
+        }
+
+        .water-progress-text strong {
+            color: #3b82f6;
+            font-size: 1.1rem;
+        }
+
+        .water-suggest {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: var(--radius-lg);
+            font-size: 0.8rem;
+            color: var(--gray-300);
+            text-align: center;
+        }
+
+
+
+        /* Quick Swap Button */
+        .swap-btn {
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .swap-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .custom-form-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Custom Meal Form (Ported from Planning) */
+        .custom-meal-form {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-top: 16px;
+            text-align: left;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        .custom-meal-form h4 {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .custom-form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .custom-meal-type-select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--gray-700);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-md);
+            color: var(--gray-100);
+            font-size: 0.9rem;
+        }
+
+        .plan-action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .plan-custom-btn {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+        }
+
+        .meal-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 600px) {
+            .meal-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .meal-actions {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .swap-btn,
+            .eat-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+            }
+
+            /* Ensure swap is on top, eat is below */
+            .swap-btn {
+                order: 1;
+            }
+
+            .eat-btn {
+                order: 2;
+            }
+        }
+
+        /* Swap Modal Overlay */
+        .swap-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .swap-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .swap-modal {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(30px);
+            transition: transform 0.3s ease;
+        }
+
+        .swap-overlay.show .swap-modal {
+            transform: translateY(0);
+        }
+
+        .swap-modal-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .swap-modal-title h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .swap-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .swap-close:hover {
+            color: white;
+        }
+
+        .swap-option {
+            background: var(--gray-700);
+            border: 1px solid var(--gray-600);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .swap-option:hover {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateX(4px);
+        }
+
+        .swap-option-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .swap-option-desc {
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            margin-bottom: 8px;
+        }
+
+        .swap-option-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .swap-option-tags span {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') document.body.classList.add('light-theme');
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                    aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <a href="javascript:history.back()" class="btn btn-icon btn-secondary">←</a>
+                    <a href="../index.html" class="logo">
+                        <div class="logo-icon">
+                            <img src="../assets/logo.png" class="logo-light" alt="Bite & Burn Logo">
+                            <img src="../assets/logo-white.png" class="logo-dark" alt="Bite & Burn Logo">
+                        </div>
+                        <span>Bite & Burn</span>
+                    </a>
+                </div>
+
+                <nav>
+                    <ul class="nav-links" id="navLinks">
+                        <li><a href="food-planning.html">Food Planning</a></li>
+                        <li><a href="workout.html">Workout</a></li>
+                        <li><a href="daily-routine.html">Daily Routine</a></li>
+                        <li><a href="analyzing.html">Analyzing</a></li>
+                        <li><a href="achievements.html">Achievements</a></li>
+                    </ul>
+                </nav>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-icon btn-secondary" onclick="showAchievementPopup()"
+                        title="Achievements">🏆</button>
+                    <a href="../index.html" class="btn btn-icon btn-secondary" title="Home">🏠</a>
+                    <div class="auth-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="food-page">
+        <div class="container">
+            <div class="food-header">
+                <div>
+                    <h1>Today's Meal Plan 🍽️</h1>
+                    <p class="text-muted">Personalized nutrition based on your profile</p>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span class="country-badge" id="countryBadge">
+                        🌍 <span id="countryName">Loading...</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="food-layout">
+                <div class="nutrition-sidebar">
+                    <!-- Nutrition Progress -->
+                    <div class="nutrition-card">
+                        <h3 style="margin-bottom: 20px;">Today's Intake</h3>
+                        <div class="nutrition-circles">
+                            <div class="nutrition-item">
+                                <div class="mini-circle">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="bg" cx="30" cy="30" r="24" />
+                                        <circle class="progress calories" id="caloriesCircle" cx="30" cy="30" r="24"
+                                            stroke-dasharray="151" stroke-dashoffset="151" />
+                                    </svg>
+                                    <div class="mini-circle-value" id="caloriesValue">0%</div>
+                                </div>
+                                <div>
+                                    <div class="nutrition-value"><span id="caloriesEaten">0</span> / <span
+                                            id="caloriesTarget">2000</span></div>
+                                    <div class="nutrition-label">Calories</div>
+                                </div>
+                            </div>
+
+                            <div class="nutrition-item">
+                                <div class="mini-circle">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="bg" cx="30" cy="30" r="24" />
+                                        <circle class="progress protein" id="proteinCircle" cx="30" cy="30" r="24"
+                                            stroke-dasharray="151" stroke-dashoffset="151" />
+                                    </svg>
+                                    <div class="mini-circle-value" id="proteinValue">0%</div>
+                                </div>
+                                <div>
+                                    <div class="nutrition-value"><span id="proteinEaten">0</span>g / <span
+                                            id="proteinTarget">150</span>g</div>
+                                    <div class="nutrition-label">Protein</div>
+                                </div>
+                            </div>
+
+                            <div class="nutrition-item">
+                                <div class="mini-circle">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="bg" cx="30" cy="30" r="24" />
+                                        <circle class="progress carbs" id="carbsCircle" cx="30" cy="30" r="24"
+                                            stroke-dasharray="151" stroke-dashoffset="151" />
+                                    </svg>
+                                    <div class="mini-circle-value" id="carbsValue">0%</div>
+                                </div>
+                                <div>
+                                    <div class="nutrition-value"><span id="carbsEaten">0</span>g / <span
+                                            id="carbsTarget">250</span>g</div>
+                                    <div class="nutrition-label">Carbs</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medicine Reminder -->
+                    <div class="nutrition-card medicine-card" id="medicineCard" style="display: none;">
+                        <div class="medicine-header">
+                            <span class="medicine-icon">💊</span>
+                            <strong>Medicine Reminder</strong>
+                        </div>
+                        <p id="medicineText" style="font-size: 0.875rem; color: var(--gray-300);"></p>
+                    </div>
+
+                    <!-- Water Intake Tracker -->
+                    <div class="nutrition-card water-tracker-card">
+                        <h4 style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                            💧 Water Intake
+                        </h4>
+                        <div class="water-progress-text">
+                            <strong id="waterCount">0</strong> / 8 glasses
+                        </div>
+                        <div class="water-glasses-grid" id="waterGlassesGrid">
+                            <!-- 8 glass buttons rendered by JS -->
+                        </div>
+                        <div class="water-suggest" id="waterSuggest">
+                            💡 Aim for 8 glasses (2L) daily. Drink a glass with each meal!
+                        </div>
+                    </div>
+
+                    <!-- Health Tips -->
+                    <div class="nutrition-card tips-card" id="tipsCard">
+                        <h4 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            💡 Health Tips
+                        </h4>
+                        <div id="healthTips">
+                            <!-- Tips will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+
+                    <div class="meals-area" id="mealsArea">
+                        <!-- Meal sections will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Quick Swap Modal -->
+        <div class="swap-overlay" id="swapOverlay" onclick="closeSwapModal(event)">
+            <div class="swap-modal">
+                <div class="swap-modal-title">
+                    <h3>⚡ Quick Swap</h3>
+                    <button class="swap-close" onclick="closeSwapModal()">&times;</button>
+                </div>
+                <p style="color: var(--gray-400); font-size: 0.85rem; margin-bottom: 16px;">Pick a faster, healthy
+                    alternative (all ≤10 min):</p>
+                <div id="swapOptions"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2026 <strong>Deltians AI Force</strong>. All rights reserved.
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:0771364629">0771364629</a> | <a href="tel:0715120657">0715120657</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Toggle -->
+    <button class="chat-toggle" id="chatToggle" style="background: var(--gradient-primary);">💬</button>
+
+    <!-- Chat Popup -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header" style="background: var(--gradient-primary);">
+            <span>Nutrition Assistant</span>
+            <button class="modal-close" id="chatClose">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">🍽️ Hi! Ask me about your meal plan or nutrition!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="form-input" placeholder="Type a message..." id="chatInput">
+            <button class="btn btn-primary btn-icon" id="chatSend"
+                style="background: var(--gradient-primary);">➤</button>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../data/country-foods.js"></script>
+    <script>
+        let mealPlan = {
+            breakfast: [],
+            lunch: [],
+            dinner: [],
+            snacks: []
+        };
+
+        // Get date key for today
+        function getDateKey() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+        let currentSwapTarget = null; // { mealType, index }
+
+        let eaten = {
+            calories: 0,
+            protein: 0,
+            carbs: 0
+        };
+
+        let targets = {
+            calories: 2000,
+            protein: 150,
+            carbs: 250
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isLoggedIn()) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            const user = getCurrentUser();
+
+            // Set country
+            const countryName = getCountryName(user.country);
+            document.getElementById('countryName').textContent = countryName;
+
+            // Set targets based on user profile
+            const activityMult = getActivityMultiplier();
+            targets.calories = Math.round((user.dailyCalories || 2000) * activityMult);
+
+            // Adjust based on goal
+            if (user.goal === 'lose_weight') {
+                targets.calories = Math.round(targets.calories * 0.8);
+                targets.carbs = 200;
+            } else if (user.goal === 'gain_muscle') {
+                targets.protein = 180;
+                targets.calories = Math.round(targets.calories * 1.1);
+            }
+
+            // Show activity badge if high activity
+            if (activityMult > 1.0) {
+                const diff = Math.round((activityMult - 1) * 100);
+                showToast(`High activity detected! Calories increased by ${diff}% 🔥`, 'info');
+            }
+
+            document.getElementById('caloriesTarget').textContent = targets.calories;
+            document.getElementById('proteinTarget').textContent = targets.protein;
+            document.getElementById('carbsTarget').textContent = targets.carbs;
+
+            // Show medicine reminder if applicable
+            if (user.medicines && user.medicines.trim()) {
+                document.getElementById('medicineCard').style.display = 'block';
+                document.getElementById('medicineText').textContent =
+                    `Remember to take: ${user.medicines}. Take with meals as prescribed.`;
+            }
+
+
+
+            // Generate health tips
+            generateHealthTips(user);
+
+            // Show Active Day badge
+            // activityMult is already calculated above
+            if (activityMult > 1.1) {
+                const header = document.querySelector('.header-content');
+                if (header) {
+                    const badge = document.createElement('div');
+                    badge.className = 'activity-badge';
+                    badge.innerHTML = `🔥 Active Day`;
+                    badge.style.cssText = `
+                        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+                        color: white;
+                        padding: 4px 12px;
+                        border-radius: 20px;
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        margin-left: 10px;
+                        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+                        animation: pulse 2s infinite;
+                     `;
+                    // Insert after logo or title if possible, or append to header actions
+                    const logo = header.querySelector('.logo');
+                    if (logo) logo.after(badge);
+                }
+            }
+
+            // Generate meal plan (this resets eaten to 0 internally)
+            generateMealPlan();
+
+            // Restore persisted eaten data from localStorage (after generateMealPlan reset)
+            const savedEaten = getFromStorage('biteburn_eaten_' + getDateKey(), { calories: 0, protein: 0, carbs: 0 });
+            if (savedEaten.calories > 0 || savedEaten.protein > 0 || savedEaten.carbs > 0) {
+                eaten.calories = savedEaten.calories || 0;
+                eaten.protein = savedEaten.protein || 0;
+                eaten.carbs = savedEaten.carbs || 0;
+                updateNutrition();
+            }
+
+            // Initialize water tracker
+            initWaterTracker();
+        });
+
+
+
+
+
+        function generateHealthTips(user) {
+            const tips = [];
+
+            // Based on conditions
+            if (user.conditions?.includes('diabetes')) {
+                tips.push('Monitor your sugar intake and prefer complex carbohydrates');
+            }
+            if (user.conditions?.includes('blood_pressure')) {
+                tips.push('Limit salt intake and include potassium-rich foods');
+            }
+
+            // Based on stress level
+            if (user.stress === 'yes') {
+                tips.push('Include magnesium-rich foods like leafy greens and nuts');
+            }
+
+            // General tips
+            tips.push('Drink at least 8 glasses of water throughout the day');
+            tips.push('Eat slowly and chew your food thoroughly');
+
+            // Render tips
+            const container = document.getElementById('healthTips');
+            container.innerHTML = tips.slice(0, 4).map(tip => `
+        <div class="tip-item">
+          <span>•</span>
+          <span>${tip}</span>
+        </div>
+      `).join('');
+        }
+
+        function generateMealPlan() {
+            const user = getCurrentUser();
+            const todayKey = getDateKey();
+
+            // Check for saved meal plan
+            const savedPlan = getFromStorage(`biteburn_mealplan_${todayKey}`);
+            if (savedPlan) {
+                mealPlan = savedPlan;
+                planProvisional = false;
+
+                // Recalculate eaten totals from saved plan
+                eaten = { calories: 0, protein: 0, carbs: 0 };
+                Object.values(mealPlan).flat().forEach(m => {
+                    if (m.eaten) {
+                        eaten.calories += m.calories;
+                        eaten.protein += m.protein;
+                        eaten.carbs += m.carbs;
+                    }
+                });
+
+                renderMeals();
+                updateNutrition();
+                return;
+            }
+
+            // NO saved plan exists. Do NOT auto-generate.
+            // Show "Generate Plan" UI instead.
+            mealPlan = null;
+            renderMeals();
+            updateNutrition();
+        }
+
+        function createNewDayPlan() {
+            const user = getCurrentUser();
+            const meals = getMealsForCountry(user.country);
+            // Load ingredients from storage for matching
+            const ingredients = getFromStorage(STORAGE_KEYS.INGREDIENTS) || [];
+
+            // Filter by diet
+            const filterByDiet = (list) => {
+                let filtered = [...list];
+                if (user.dietType === 'vegetarian') {
+                    filtered = filtered.filter(m =>
+                        !m.name.toLowerCase().includes('chicken') &&
+                        !m.name.toLowerCase().includes('fish') &&
+                        !m.name.toLowerCase().includes('meat') &&
+                        !m.name.toLowerCase().includes('beef') &&
+                        !m.name.toLowerCase().includes('pork')
+                    );
+                }
+                if (user.allergies) {
+                    const allergyList = user.allergies.toLowerCase().split(',').map(a => a.trim());
+                    filtered = filtered.filter(m =>
+                        !allergyList.some(a => m.name.toLowerCase().includes(a) || m.desc.toLowerCase().includes(a))
+                    );
+                }
+                return filtered.length > 0 ? filtered : list;
+            };
+
+            const breakfast = pickBestMeal(filterByDiet(meals.breakfast), ingredients);
+            const lunch = pickBestMeal(filterByDiet(meals.lunch), ingredients, [breakfast]);
+            const dinner = pickBestMeal(filterByDiet(meals.dinner), ingredients, [breakfast, lunch]);
+
+            const snack1 = pickBestMeal(filterByDiet(meals.snacks), ingredients);
+            const snack2 = pickBestMeal(filterByDiet(meals.snacks), ingredients, [snack1]);
+
+            mealPlan = {
+                breakfast: [{ ...breakfast, eaten: false, ingredients: getIngredientAmounts(breakfast) }],
+                lunch: [{ ...lunch, eaten: false, ingredients: getIngredientAmounts(lunch) }],
+                dinner: [{ ...dinner, eaten: false, ingredients: getIngredientAmounts(dinner) }],
+                snacks: [
+                    { ...snack1, eaten: false, ingredients: getIngredientAmounts(snack1) },
+                    { ...snack2, eaten: false, ingredients: getIngredientAmounts(snack2) }
+                ]
+            };
+
+            planProvisional = true;
+            renderMeals();
+            showToast('Provisional plan generated. Please accept to save.', 'info');
+        }
+
+        function acceptDayPlan() {
+            planProvisional = false;
+            saveMealPlan();
+            showToast('Meal plan accepted and saved!', 'success');
+            renderMeals();
+        }
+
+        function rejectDayPlan() {
+            mealPlan = null;
+            createNewDayPlan();
+            showToast('New plan generated!', 'info');
+        }
+
+        function saveMealPlan() {
+            const todayKey = getDateKey();
+            saveData(`biteburn_mealplan_${todayKey}`, mealPlan);
+        }
+
+
+        function showCustomMealForm() {
+            const area = document.getElementById('customMealFormArea');
+            if (!area) return;
+
+            area.innerHTML = `
+            <div class="custom-meal-form">
+                <h4>✏️ Add a Custom Meal</h4>
+                <div class="custom-form-grid">
+                    <div>
+                        <label class="form-label">Meal Slot</label>
+                        <select class="custom-meal-type-select" id="customMealType">
+                            <option value="breakfast">🌅 Breakfast</option>
+                            <option value="lunch">☀️ Lunch</option>
+                            <option value="dinner">🌙 Dinner</option>
+                            <option value="snacks">🥗 Snack</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Estimated Calories</label>
+                        <input type="number" class="form-input" id="customMealCal" placeholder="e.g. 400" value="400">
+                    </div>
+                    <div class="full-width">
+                        <label class="form-label">Meal Name</label>
+                        <input type="text" class="form-input" id="customMealName" placeholder="e.g. Homemade Chicken Fried Rice">
+                    </div>
+                    <div class="full-width">
+                        <label class="form-label">Description / Notes</label>
+                        <input type="text" class="form-input" id="customMealDesc" placeholder="e.g. With vegetables and egg">
+                    </div>
+                </div>
+                <div class="custom-form-actions">
+                    <button class="btn btn-primary" style="flex:1" onclick="addCustomMeal()">➕ Add to Plan</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('customMealFormArea').innerHTML=''">Cancel</button>
+                </div>
+            </div>`;
+
+            area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function addCustomMeal() {
+            const type = document.getElementById('customMealType').value;
+            const name = document.getElementById('customMealName').value.trim();
+            const desc = document.getElementById('customMealDesc').value.trim();
+            const cal = parseInt(document.getElementById('customMealCal').value) || 400;
+
+            if (!name) {
+                showToast('Please enter a meal name', 'error');
+                return;
+            }
+
+            if (!mealPlan) {
+                mealPlan = { breakfast: [], lunch: [], dinner: [], snacks: [] };
+            }
+
+            const customMeal = {
+                name: name,
+                desc: desc || 'Custom meal',
+                calories: cal,
+                protein: Math.round(cal * 0.15 / 4),
+                carbs: Math.round(cal * 0.5 / 4),
+                prepTime: null,
+                eaten: false,
+                _matchScore: 0,
+                _custom: true,
+                ingredients: getIngredientAmounts({ name, desc: desc || '' })
+            };
+
+            // Replace the slot with the custom meal
+            mealPlan[type] = [customMeal];
+
+            document.getElementById('customMealFormArea').innerHTML = '';
+            renderMeals();
+            showToast(`Custom ${type} added to plan!`, 'success');
+        }
+
+        function selectRandomMeals(mealList, count) {
+            const shuffled = [...mealList].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count).map(m => ({ ...m, eaten: false }));
+        }
+
+        function renderMeals() {
+            const container = document.getElementById('mealsArea');
+
+            // Case 1: No Plan
+            if (!mealPlan) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 40px; background: var(--gray-800); border-radius: var(--radius-xl); border: 1px solid var(--gray-700);">
+                        <h3>🍽️ No Meal Plan Set for Today</h3>
+                        <p class="text-muted" style="margin-bottom:20px;">Generate a personalized plan based on your preferences and available ingredients.</p>
+                        <button class="btn btn-primary" onclick="createNewDayPlan()" style="padding: 12px 24px;">✨ Generate Today's Plan</button>
+                    </div>
+                `;
+                document.getElementById('caloriesEaten').textContent = 0;
+                document.getElementById('proteinEaten').textContent = 0;
+                document.getElementById('carbsEaten').textContent = 0;
+                return;
+            }
+
+            // Case 2: Provisional Plan (Not Accepted)
+            let provisionalHeader = '';
+            if (planProvisional) {
+                provisionalHeader = `
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 16px; border-radius: var(--radius-lg); margin-bottom: 20px; text-align: center;">
+                        <h4 style="color: #fbbf24; margin-bottom: 8px;">⏳ Provisional Plan</h4>
+                        <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 12px;">This plan is not saved yet. Accept it to start tracking.</p>
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn btn-primary" onclick="acceptDayPlan()">✅ Accept Plan</button>
+                            <button class="btn btn-secondary" onclick="rejectDayPlan()">🔄 Try Another</button>
+                            <button class="plan-action-btn plan-custom-btn" onclick="showCustomMealForm()">✏️ Add Custom Meal</button>
+                        </div>
+                        <div id="customMealFormArea"></div>
+                    </div>
+                `;
+            }
+
+            const mealTypes = [
+                { key: 'breakfast', icon: '🌅', title: 'Breakfast', time: '7:00 - 9:00 AM' },
+                { key: 'lunch', icon: '☀️', title: 'Lunch', time: '12:00 - 2:00 PM' },
+                { key: 'dinner', icon: '🌙', title: 'Dinner', time: '6:00 - 8:00 PM' },
+                { key: 'snacks', icon: '🥗', title: 'Snacks', time: 'Throughout the day' }
+            ];
+
+            const mealsHtml = mealTypes.map(type => `
+        <div class="meal-section">
+          <div class="meal-header">
+            <div class="meal-title">
+              <div class="meal-icon">${type.icon}</div>
+              <div>
+                <h3>${type.title}</h3>
+                <span class="meal-time">${type.time}</span>
+              </div>
+            </div>
+          </div>
+          <div class="meal-list">
+            ${mealPlan[type.key].map((meal, i) => `
+              <div class="meal-item ${meal.eaten ? 'eaten' : ''}" id="meal-${type.key}-${i}">
+                <div class="meal-info">
+                  <div class="meal-name">
+                    ${meal.name} 
+                    ${meal._matchScore > 0 ? `<span class="match-badge" style="font-size:0.7rem; padding:2px 6px; background:rgba(34,197,94,0.1); color:#22c55e; border-radius:10px;">✓ Match</span>` : ''}
+                    ${meal.prepTime ? `<span class="prep-badge">⏱️ ${meal.prepTime} min</span>` : ''}
+                  </div>
+                  <div class="meal-desc">${meal.desc}</div>
+                  <div class="meal-nutrition">
+                    <span class="nutrition-tag calories">${meal.calories} cal</span>
+                    <span class="nutrition-tag protein">${meal.protein}g protein</span>
+                    <span class="nutrition-tag carbs">${meal.carbs}g carbs</span>
+                  </div>
+                  ${meal.ingredients ? `
+                  <div style="margin-top:8px; font-size:0.8rem; color:var(--gray-400);">
+                     <strong>Approx items:</strong> 
+                     ${meal.ingredients.map(ing => `${ing.name} (${ing.amount})`).slice(0, 3).join(', ')}
+                     ${meal.ingredients.length > 3 ? `+${meal.ingredients.length - 3} more` : ''}
+                  </div>` : ''}
+                </div>
+                <div class="meal-actions">
+                  ${meal.eaten
+                    ? '<span class="eaten-badge">✓ Eaten</span>'
+                    : (planProvisional
+                        ? '<span class="text-muted" style="font-size:0.8rem">Accept to track</span>'
+                        : `<button class="swap-btn" onclick="showQuickSwap('${type.key}', ${i})" title="Quick swap for a faster meal">⚡ Swap</button>
+                           <button class="eat-btn" onclick="markEaten('${type.key}', ${i})">Mark Eaten</button>`)
+                }
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+            container.innerHTML = provisionalHeader + mealsHtml;
+        }
+
+        // Ingredient amount rules (keyword -> ingredient name + amount per person)
+        const INGREDIENT_RULES = {
+            'rice': { name: 'Rice', amount: '~200g' },
+            'chicken': { name: 'Chicken', amount: '~150g' },
+            'fish': { name: 'Fish', amount: '~150g' },
+            'egg': { name: 'Eggs', amount: '2 pcs' },
+            'lentil': { name: 'Lentils', amount: '~80g' },
+            'dal': { name: 'Lentils (Dal)', amount: '~80g' },
+            'dhal': { name: 'Lentils (Dhal)', amount: '~80g' },
+            'noodle': { name: 'Noodles', amount: '~100g' },
+            'pasta': { name: 'Pasta', amount: '~100g' },
+            'bread': { name: 'Bread', amount: '2 slices' },
+            'toast': { name: 'Bread', amount: '2 slices' },
+            'roti': { name: 'Roti/Flatbread', amount: '2-3 pcs' },
+            'chapati': { name: 'Chapati', amount: '2-3 pcs' },
+            'oat': { name: 'Oats', amount: '~50g' },
+            'yogurt': { name: 'Yogurt', amount: '~150g' },
+            'milk': { name: 'Milk', amount: '~200ml' },
+            'coconut': { name: 'Coconut', amount: '~50g (grated)' },
+            'potato': { name: 'Potato', amount: '~200g' },
+            'tomato': { name: 'Tomatoes', amount: '~100g' },
+            'onion': { name: 'Onion', amount: '1 medium' },
+            'vegetable': { name: 'Mixed Vegetables', amount: '~200g' },
+            'fruit': { name: 'Fresh Fruits', amount: '~150g' }
+        };
+
+        function scoreMeal(meal, userIngredients) {
+            const text = (meal.name + ' ' + meal.desc).toLowerCase();
+            let score = 0;
+            if (!userIngredients) return 0;
+            userIngredients.forEach(ing => {
+                if (text.includes(ing)) score++;
+            });
+            return score;
+        }
+
+        function getIngredientAmounts(meal) {
+            const text = (meal.name + ' ' + meal.desc).toLowerCase();
+            const amounts = [];
+            const seen = new Set();
+            for (const [keyword, info] of Object.entries(INGREDIENT_RULES)) {
+                if (text.includes(keyword) && !seen.has(info.name)) {
+                    seen.add(info.name);
+                    amounts.push({ name: info.name, amount: info.amount });
+                }
+            }
+            if (amounts.length === 0) {
+                if (meal.calories > 400) {
+                    amounts.push({ name: 'Main ingredient', amount: '~200g' });
+                    amounts.push({ name: 'Side ingredients', amount: '~100g' });
+                } else {
+                    amounts.push({ name: 'Main ingredient', amount: '~150g' });
+                }
+            }
+            return amounts;
+        }
+
+        function pickBestMeal(mealList, userIngredients, exclude = []) {
+            const excludeNames = exclude.map(m => m.name);
+            let available = mealList.filter(m => !excludeNames.includes(m.name));
+            if (available.length === 0) available = mealList;
+            const scored = available.map(m => ({ meal: m, score: scoreMeal(m, userIngredients) }));
+            scored.sort((a, b) => b.score - a.score);
+            const topScore = scored[0].score;
+            const topMeals = scored.filter(s => s.score === topScore);
+            const pick = topMeals[Math.floor(Math.random() * topMeals.length)];
+            return { ...pick.meal, _matchScore: pick.score };
+        }
+
+        let planProvisional = false;
+
+        function markEaten(mealType, index) {
+            if (planProvisional) {
+                showToast('Please accept the plan first!', 'info');
+                return;
+            }
+            const meal = mealPlan[mealType][index];
+            meal.eaten = true;
+
+            // Add to eaten totals
+            eaten.calories += meal.calories;
+            eaten.protein += meal.protein;
+            eaten.carbs += meal.carbs;
+
+            // Persist to localStorage for dashboard
+            saveData('biteburn_eaten_' + getDateKey(), { calories: eaten.calories, protein: eaten.protein, carbs: eaten.carbs });
+
+            // Save updated meal plan status
+            saveMealPlan();
+
+            renderMeals();
+            updateNutrition();
+
+            showToast(`${meal.name} marked as eaten!`, 'success');
+
+            // Check achievements
+            const totalEaten = Object.values(mealPlan).flat().filter(m => m.eaten).length;
+            if (totalEaten === Object.values(mealPlan).flat().length) {
+                unlockAchievement('meal_complete', 'Nutrition Master', 'Followed a full day meal plan', '🍽️');
+            }
+        }
+
+        function updateNutrition() {
+            const circumference = 24 * 2 * Math.PI;
+
+            // Calories
+            const calPercent = Math.min((eaten.calories / targets.calories) * 100, 100);
+            const calOffset = circumference - (calPercent / 100) * circumference;
+            document.getElementById('caloriesCircle').style.strokeDashoffset = calOffset;
+            document.getElementById('caloriesValue').textContent = `${Math.round(calPercent)}%`;
+            document.getElementById('caloriesEaten').textContent = eaten.calories;
+
+            // Protein
+            const proPercent = Math.min((eaten.protein / targets.protein) * 100, 100);
+            const proOffset = circumference - (proPercent / 100) * circumference;
+            document.getElementById('proteinCircle').style.strokeDashoffset = proOffset;
+            document.getElementById('proteinValue').textContent = `${Math.round(proPercent)}%`;
+            document.getElementById('proteinEaten').textContent = eaten.protein;
+
+            // Carbs
+            const carbPercent = Math.min((eaten.carbs / targets.carbs) * 100, 100);
+            const carbOffset = circumference - (carbPercent / 100) * circumference;
+            document.getElementById('carbsCircle').style.strokeDashoffset = carbOffset;
+            document.getElementById('carbsValue').textContent = `${Math.round(carbPercent)}%`;
+            document.getElementById('carbsEaten').textContent = eaten.carbs;
+        }
+
+        // --- Water Intake Tracker ---
+        function initWaterTracker() {
+            const grid = document.getElementById('waterGlassesGrid');
+            if (!grid) return;
+
+            const currentWater = getTodayWater();
+
+            grid.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const glass = document.createElement('button');
+                glass.className = `water-glass ${i <= currentWater ? 'filled' : ''}`;
+                glass.innerHTML = i <= currentWater ? '💧' : '🥤';
+                glass.title = `Glass ${i}`;
+                glass.onclick = () => toggleWaterGlass(i);
+                grid.appendChild(glass);
+            }
+
+            document.getElementById('waterCount').textContent = currentWater;
+            updateWaterSuggestion(currentWater);
+        }
+
+        function toggleWaterGlass(glassNum) {
+            let current = getTodayWater();
+
+            // If clicking the current filled glass, remove it; otherwise fill up to that glass
+            if (glassNum <= current) {
+                current = glassNum - 1;
+            } else {
+                current = glassNum;
+            }
+
+            saveTodayWater(current);
+            initWaterTracker();
+
+            if (current >= 8) {
+                showToast('Amazing! You completed your water goal! 💧🎉', 'success');
+                unlockAchievement('water_champion', 'Hydration Hero', 'Drank 8 glasses of water in a day', '💧');
+            }
+        }
+
+        function updateWaterSuggestion(glasses) {
+            const suggest = document.getElementById('waterSuggest');
+            if (!suggest) return;
+
+            if (glasses >= 8) {
+                suggest.innerHTML = '✅ Great job! You\'ve reached your daily water goal!';
+                suggest.style.background = 'rgba(34, 197, 94, 0.1)';
+            } else if (glasses >= 5) {
+                suggest.innerHTML = `💪 Almost there! ${8 - glasses} more glasses to go.`;
+            } else if (glasses >= 2) {
+                suggest.innerHTML = `💡 Keep drinking! You need ${8 - glasses} more glasses today.`;
+            } else {
+                suggest.innerHTML = '💡 Aim for 8 glasses (2L) daily. Drink a glass with each meal!';
+            }
+        }
+
+        // --- Quick Swap Feature ---
+        let swapOptionsCache = []; // Stores the current swap options for swapMeal to reference
+
+        function getQuickSwapOptions(mealType) {
+            const user = getCurrentUser();
+            const mealTypeKey = (mealType === 'snacks') ? 'snacks' : mealType;
+            const currentMeal = mealPlan[mealType]?.[currentSwapTarget?.index];
+            const currentMealName = currentMeal ? currentMeal.name : '';
+
+            // Helper: apply diet & allergy filters (same rules as main plan)
+            function applyUserFilters(mealList) {
+                let filtered = [...mealList];
+
+                if (user.dietType === 'vegetarian') {
+                    filtered = filtered.filter(m =>
+                        !m.name.toLowerCase().includes('chicken') &&
+                        !m.name.toLowerCase().includes('fish') &&
+                        !m.name.toLowerCase().includes('meat') &&
+                        !m.name.toLowerCase().includes('beef') &&
+                        !m.name.toLowerCase().includes('pork') &&
+                        !m.name.toLowerCase().includes('prawn') &&
+                        !m.name.toLowerCase().includes('tuna') &&
+                        !m.name.toLowerCase().includes('salmon')
+                    );
+                }
+
+                if (user.allergies) {
+                    const allergyList = user.allergies.toLowerCase().split(',').map(a => a.trim());
+                    filtered = filtered.filter(m =>
+                        !allergyList.some(a => m.name.toLowerCase().includes(a) || m.desc.toLowerCase().includes(a))
+                    );
+                }
+
+                // Exclude current meal
+                filtered = filtered.filter(m => m.name !== currentMealName);
+                return filtered;
+            }
+
+            // 1. Country-specific quick meals from QUICK_MEALS
+            const countryQuick = QUICK_MEALS[user.country] || QUICK_MEALS.DEFAULT;
+            const countryFast = applyUserFilters(countryQuick[mealTypeKey] || []);
+
+            // 2. Default quick meals as fallback (for unlisted countries)
+            const defaultFast = (user.country && QUICK_MEALS[user.country])
+                ? [] // Already using country-specific, no need for default fallback
+                : applyUserFilters((QUICK_MEALS.DEFAULT[mealTypeKey] || []));
+
+            // 3. Combine: country meals first, then generic. Max 4 options.
+            const combined = [];
+            const usedNames = new Set();
+
+            for (const m of countryFast) {
+                if (combined.length >= 4) break;
+                if (!usedNames.has(m.name)) { combined.push(m); usedNames.add(m.name); }
+            }
+            for (const m of defaultFast) {
+                if (combined.length >= 4) break;
+                if (!usedNames.has(m.name)) { combined.push(m); usedNames.add(m.name); }
+            }
+
+            return combined;
+        }
+
+        function showQuickSwap(mealType, index) {
+            currentSwapTarget = { mealType, index };
+            // Build swap options: country-specific fast meals first, then generic fallback
+            const swapList = getQuickSwapOptions(mealType);
+            swapOptionsCache = swapList;
+            const options = swapList; // use filtered, country-aware options
+            const container = document.getElementById('swapOptions');
+
+            container.innerHTML = options.map((meal, i) => `
+                <div class="swap-option" onclick="swapMeal(${i})">
+                    <div class="swap-option-name">${meal.name}</div>
+                    <div class="swap-option-desc">${meal.desc}</div>
+                    <div class="swap-option-tags">
+                        <span style="color: #f97316;">🔥 ${meal.calories} cal</span>
+                        <span style="color: #3b82f6;">💪 ${meal.protein}g protein</span>
+                        <span style="color: #22c55e;">🌾 ${meal.carbs}g carbs</span>
+                        <span style="color: #a78bfa;">⏱️ ${meal.prepTime} min</span>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('swapOverlay').classList.add('show');
+        }
+
+        function closeSwapModal(e) {
+            if (e && e.target !== e.currentTarget) return;
+            document.getElementById('swapOverlay').classList.remove('show');
+            currentSwapTarget = null;
+            swapOptionsCache = [];
+        }
+
+        function swapMeal(quickIndex) {
+            if (!currentSwapTarget) return;
+            const { mealType, index } = currentSwapTarget;
+            const quickMeal = swapOptionsCache[quickIndex];
+
+            // If the old meal was already eaten, subtract its nutrition
+            const oldMeal = mealPlan[mealType][index];
+            if (oldMeal.eaten) {
+                eaten.calories -= oldMeal.calories;
+                eaten.protein -= oldMeal.protein;
+                eaten.carbs -= oldMeal.carbs;
+            }
+
+            // Replace meal
+            mealPlan[mealType][index] = { ...quickMeal, eaten: false };
+
+            saveMealPlan();
+            renderMeals();
+            updateNutrition();
+
+            // Persist eaten if changed
+            saveData('biteburn_eaten_' + getDateKey(selectedDay), { calories: eaten.calories, protein: eaten.protein, carbs: eaten.carbs });
+
+            closeSwapModal();
+            showToast(`Swapped to ${quickMeal.name} (${quickMeal.prepTime} min)! ⚡`, 'success');
+        }
+    </script>
+</body>
+
+</html>
