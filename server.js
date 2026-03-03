@@ -14,6 +14,11 @@ app.use(express.json({ limit: '50mb' })); // Increase limit for base64 images
 // Serve static files (HTML, CSS, JS) from the project root
 app.use(express.static(path.join(__dirname)));
 
+// Explicit route for the homepage to ensure Vercel serves it correctly
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Local AI Analysis Data (Mocked for Offline Use)
 const ANALYSIS_RESPONSES = {
     headache: `
