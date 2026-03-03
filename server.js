@@ -188,7 +188,11 @@ app.post('/api/auth/delete', async (req, res) => {
 });
 
 // Start Server
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-    console.log(`Open http://localhost:${port}/index.html in your browser`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+        console.log(`Open http://localhost:${port}/index.html in your browser`);
+    });
+}
+
+module.exports = app;
